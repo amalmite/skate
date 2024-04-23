@@ -1,29 +1,14 @@
 {
   "menu": [
+  
     {
-      "name": "Dashboards",
-      "icon": "menu-icon tf-icons mdi mdi-home-outline",
-      "slug": "dashboard",
-      "badge": [
-        "primary",
-        "5"
-      ],
-      "submenu": [
-        {
-          "url": "index",
-          "name": "Analytics",
-          "slug": "dashboard-analytics"
-        }
-      ]
-    },
-    {
-      "name": "Header",
+      "name": "Slider",
       "icon": "menu-icon tf-icons mdi mdi-window-maximize",
       "slug": "from",
       "submenu": [
         {
           "url": "header-form",
-          "name": "Header Form",
+          "name": "Add Slider",
           "slug": "header-form"
         }
    

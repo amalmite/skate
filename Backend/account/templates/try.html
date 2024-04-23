@@ -1,0 +1,69 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}eCommerce Add Product - Apps{% endblock %}
+
+{% block vendor_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/libs/quill/typography.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/quill/katex.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/quill/editor.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/select2/select2.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/dropzone/dropzone.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/flatpickr/flatpickr.css' %}" />
+<link rel="stylesheet" href="{% static 'vendor/libs/tagify/tagify.css' %}" />
+{% endblock vendor_css %}
+
+{% block vendor_js %}
+{{ block.super }}
+<script src="{% static 'vendor/libs/quill/katex.js' %}"></script>
+<script src="{% static 'vendor/libs/quill/quill.js' %}"></script>
+<script src="{% static 'vendor/libs/select2/select2.js' %}"></script>
+<script src="{% static 'vendor/libs/dropzone/dropzone.js' %}"></script>
+<script src="{% static 'vendor/libs/jquery-repeater/jquery-repeater.js' %}"></script>
+<script src="{% static 'vendor/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'vendor/libs/tagify/tagify.js' %}"></script>
+{% endblock vendor_js %}
+
+{% block page_js %}
+{{ block.super }}
+<script src="{% static 'js/app-ecommerce-product-add.js' %}"></script>
+{% endblock page_js %}
+
+{% block content %}
+
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">{% translate "eCommerce" %} /</span> {% translate "Add Product" %}
+</h4>
+
+<!-- <div class="app-ecommerce"> -->
+
+  <!-- Add Product -->
+
+
+      <!-- /Product Information -->
+      <!-- Media -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 card-title">Media</h5>
+          <a href="javascript:void(0);" class="fw-medium">Add media from URL</a>
+        </div>
+        <div class="card-body">
+          <form action="/upload" class="dropzone needsclick" id="dropzone-basic">
+            <div class="dz-message needsclick my-5">
+              Drag and drop your image here
+              <small class="text-muted d-block fs-6 my-2">or</small>
+              <span class="needsclick btn btn-outline-primary d-inline" id="btnBrowse">Browse image</span>
+            </div>
+            <div class="fallback">
+              <input name="file" type="file" />
+            </div>
+          </form>
+        </div>
+      </div>
+      
+</div>
+
+{% endblock %}

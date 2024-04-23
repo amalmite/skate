@@ -11,6 +11,8 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('',testView.as_view(template_name="test.html"),name="test"),
+    path('try/',tryview.as_view(template_name="try.html"),name="try"),
+
     # path('',testapiview,name="test"),
     path('header-form/', TransactionAddView.as_view(template_name="header_form.html"), name="header-form"),
 
