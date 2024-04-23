@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-uop5q1uyr_x9!o-e66v#*%+i_lnmvzzk!1$az(iy*m6m3()e+z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['skateapp.netlify.app','locathost','127.0.0.1']
+ALLOWED_HOSTS = ['skateapp.netlify.app','locathost','127.0.0.1','skating-ep21.onrender.com']
 
 
 AUTH_USER_MODEL = "account.User"
