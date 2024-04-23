@@ -1,0 +1,260 @@
+{% extends layout_path %} 
+{% load static %} 
+{% load i18n %}
+ {% block title%}Session Creation{% endblock %} {% block vendor_css %} {{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/libs/select2/select2.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/@form-validation/umd/styles/index.min.css' %}"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/flatpickr/flatpickr.css' %}"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/bootstrap-select/bootstrap-select.css'%}"
+/>
+<link rel="stylesheet" href="{% static 'vendor/libs/dropzone/dropzone.css'%}" />
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/bootstrap-maxlength/bootstrap-maxlength.css'%} "
+/>
+{% endblock vendor_css %} {% block vendor_js %} {{ block.super }}
+<script src="{% static 'vendor/libs/select2/select2.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/bundle/popular.min.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js' %}"></script>
+<script src="{% static 'vendor/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'vendor/libs/bootstrap-select/bootstrap-select.js'%}"></script>
+<script src="{% static 'vendor/libs/dropzone/dropzone.js'%}"></script>
+<script src="{% static 'vendor/libs/bootstrap-maxlength/bootstrap-maxlength.js'%}"></script>
+
+{% endblock vendor_js %}
+ {% block page_js %} 
+ {{ block.super }}
+ <script>
+  var toastElements = document.querySelectorAll('.toast');
+
+if (toastElements) {
+toastElements.forEach(function (element) {
+  var toast = new bootstrap.Toast(element);
+  toast.show();
+});
+}
+
+</script>
+  {% endblock page_js %} 
+  {% block content %}
+
+  {% if messages %}
+  <div class="toast-container end-0 m-1 me-4">
+    {% for message in messages %}
+    <div class="toast {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-warning{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-bs-delay="2000">
+      <div class="toast-body text-center text-white">
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">{% translate "Session" %} /</span>
+  {%translate " Session " %}{%translate " Creation " %}
+</h4>
+<div class="card">
+  <div class="card-body mt-4">
+    <form
+      class="add-transactions pt-0"
+      id="addTransactionForm"
+      action=""
+      method="post"
+     enctype="multipart/form-data"
+
+    >
+      {% csrf_token %}
+
+      <div class="form-floating form-floating-outline mb-4">
+        {{ session_form.name }}
+        <label for="session-name">{% translate 'Session Name' %}</label>
+      </div>
+
+      <div class="form-floating form-floating-outline mb-4">
+        {{ session_form.description }}
+        <label for="description">{% translate 'Description' %}</label>
+      </div>
+
+      <div class="row">
+        <div class="col-md">
+          <div class="input-group input-group-merge mb-4">
+            <span class="input-group-text">AED</span>
+            <div class="form-floating form-floating-outline">
+              {{session_form.price}}
+              <label for="session-price">{% translate 'Price' %}</label>
+            </div>
+            <span class="input-group-text">.00</span>
+          </div>
+        </div>
+
+        <div class="col-md">
+          <div class="input-group input-group-merge mb-4">
+            <div class="form-floating form-floating-outline">
+              {{ session_form.vat }}
+              <label for="session-vat">{% translate 'VAT' %}</label>
+            </div>
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md">
+          <div class="form-floating form-floating-outline mb-4">
+            {{ session_form.image1 }}
+          </div>
+        </div>
+        <div class="col-md">
+          <div class="form-floating form-floating-outline mb-4">
+            {{ session_form.image2 }}
+          </div>
+        </div>
+        </div>
+
+
+   <div class="row">
+        {% for value, label in session_form.fields.session_type.choices %}
+         {% if value %}
+        <div class="col-md">
+          <div class="form-check custom-option custom-option-basic mb-4">
+            <label class="form-check-label custom-option-content">
+              <input
+                type="radio"
+                class="form-check-input"
+                name="session_type"
+                value="{{ value }}"
+                id="session_type_{{ value }}"
+                required
+              />
+              <span class="custom-option-header">
+                <span class="h6 mb-0">{{ label }}</span>
+              </span>
+            </label>
+          </div>
+        </div>
+        {% endif %}
+         {% endfor %}
+      </div>
+
+      <div id="hour_fields" style="display: none">
+        <div class="row">
+          <div class="col-md">
+            <div class="form-floating form-floating-outline mb-4">
+              {{ hourly_session_form.hour }}
+              <label for="session-price">{% translate 'Hour' %}</label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-floating form-floating-outline mb-4">
+              {{ hourly_session_form.minute }}
+              <label for="session-price">{% translate 'Minute' %}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="membership_fields" style="display: none" >
+        <div class="row">
+          <div class="col-md">
+            <div class="form-floating form-floating-outline mb-4">
+              {{ membership_session_form.month }}
+              <label for="session-price">{% translate 'Month' %}</label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-floating form-floating-outline mb-4">
+              {{ membership_session_form.day }}
+              <label for="session-price">{% translate 'Day' %}</label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-floating form-floating-outline mb-4">
+              {{ membership_session_form.total_sessions }}
+              <label for="session-price"
+                >{% translate 'Total Sessions' %}</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div>
+        <button
+          type="submit"
+          class="btn btn-primary me-sm-3 me-1"
+          name="submitButton"
+        >
+          {% translate 'Submit'%}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const sessionTypeRadios = document.querySelectorAll(
+      'input[name="session_type"]'
+    );
+
+    sessionTypeRadios.forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        const selectedValue = this.value;
+
+
+        const hourFields = document.getElementById("hour_fields");
+        const membershipFields = document.getElementById("membership_fields");
+
+        const monthField = document.getElementById("member_month");
+        const dayField = document.getElementById("member_day");
+        const totalField = document.getElementById("member_total");
+
+        const hourField = document.getElementById("hour_hour");
+        const minuteField = document.getElementById("hour_minute");
+        
+
+        if (selectedValue === "hour") {
+          hourFields.style.display = "block";
+          membershipFields.style.display = "none";
+          monthField.removeAttribute('required');
+          dayField.removeAttribute('required');
+          totalField.removeAttribute('required');
+          minuteField.setAttribute('required', 'required');
+          hourField.setAttribute('required', 'required');
+
+
+
+        
+        } else if (selectedValue === "month") {
+          hourFields.style.display = "none";
+          membershipFields.style.display = "block";
+          monthField.setAttribute('required', 'required');
+          dayField.setAttribute('required', 'required');
+          totalField.setAttribute('required', 'required');
+          hourField.removeAttribute('required');
+          minuteField.removeAttribute('required');
+
+
+
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

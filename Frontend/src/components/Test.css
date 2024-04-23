@@ -1,0 +1,61 @@
+.bottom-container {
+  position: fixed;
+  bottom: 0px;
+  width: 100% !important;
+  background-color: #0867AD;
+  padding: 15px;
+  border-top-right-radius: 30px !important;
+  border-top-left-radius: 30px;
+  min-height: 20px;
+}
+
+.scrollable-content {
+  max-height: 25rem;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.expanded {
+  height: calc(3rem + 2rem);
+  opacity: 1;
+}
+
+.booking-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  color: #DED7DC;
+}
+.booking-details button {
+  padding: 5px 10px;
+  border: none;
+  border: none;
+  background-color: transparent;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+}
+.cart-container .cart-body {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 30px 0 20px;
+  margin: 20px 0 30px;
+}
+.btn-custom {
+  background-color: #007bff; 
+  color: #fff; 
+  border: none; 
+}
+
+.btn-custom:hover {
+  background-color: #0056b3; 
+}
+.make-payment{
+  background-color: #BF364F;
+  border:none;
+  color: white;
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+}

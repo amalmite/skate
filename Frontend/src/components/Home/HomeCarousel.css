@@ -1,0 +1,57 @@
+
+.shadow-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+  
+  .tm-banner-title{
+    color: #bf324b;
+    font-size: 74px;
+    font-weight: 600;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+.tm-banner-subtitle {
+  color: #bf324b;
+  font-size: 74px;
+  font-weight: 600;
+}
+.carousel-control-next-icon, .carousel-control-prev-icon {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: 100% 100%;
+  color: #000 !important;
+  background-color: #000 !important;
+}
+.tm-yellow-text {
+  color: #f26a28;
+}
+#btitle, #ctitle{
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+.carousel-caption {
+  position: absolute;
+  right: 0 !important;
+  top: 150px !important;
+  bottom: 1.25rem;
+  left: 0 !important;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+.b-zero, .card-body{
+  border:0px !important;
+  border-radius: 0px !important;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+}

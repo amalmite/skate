@@ -1,0 +1,29 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns with equal width */
+    grid-template-rows: auto auto; /* 2 rows with auto height */
+    gap: 20px; /* Adjust the gap between grid items */
+  }
+  
+  .grid-item {
+    padding: 20px; 
+    text-align: center; 
+  }
+  .p-text{
+    /* padding-right: 65px !important; */
+    padding-right: 4% !important;
+    text-align: justify;
+
+  }
+  .m-custom{
+    margin-top:125px !important;
+  }
+  .clearfix {
+    /* margin-top:115px !important; */
+    margin-top:5% !important;
+
+  }
+
+  .booking-main{
+    margin: 70px 33px 0px 40px;
+  }

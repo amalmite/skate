@@ -1,0 +1,15 @@
+.skate-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 4rem;
+}
+.skate-hover {
+  color: white;
+  transition: transform 0.3s ease;
+}
+.skate-hover:hover {
+  transform: scale(1.1);
+  font-weight: 600;
+  cursor: pointer;
+}

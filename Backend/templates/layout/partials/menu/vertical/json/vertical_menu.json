@@ -1,0 +1,73 @@
+{
+  "menu": [
+    {
+      "name": "Dashboards",
+      "icon": "menu-icon tf-icons mdi mdi-home-outline",
+      "slug": "dashboard",
+      "badge": [
+        "primary",
+        "5"
+      ],
+      "submenu": [
+        {
+          "url": "index",
+          "name": "Analytics",
+          "slug": "dashboard-analytics"
+        }
+      ]
+    },
+    {
+      "name": "Header",
+      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "slug": "from",
+      "submenu": [
+        {
+          "url": "header-form",
+          "name": "Header Form",
+          "slug": "header-form"
+        }
+   
+      ]
+    },
+    {
+      "name": "Session",
+      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "slug": "session",
+      "submenu": [
+        {
+          "url": "session_create",
+          "name": "Add Session",
+          "slug": "session_create"
+        },
+        {
+          "url": "session_list",
+          "name": "List Session",
+          "slug": "session_list"
+        },
+        {
+          "url": "session_schedule",
+          "name": "Session Schedule",
+          "slug": "session_schedule"
+        }
+   
+      ]
+    },{
+      "name": "Product",
+      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "slug": "product",
+      "submenu": [
+        {
+          "url": "product_create",
+          "name": "Add Product",
+          "slug": "product_create"
+        },
+        {
+          "url": "product_list",
+          "name": "Product List",
+          "slug": "product_list"
+        }
+      ]
+    }
+
+  ]
+}

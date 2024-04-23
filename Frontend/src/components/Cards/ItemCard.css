@@ -1,0 +1,15 @@
+/* .item-card {
+  max-width: 24rem;
+  min-height: 20rem;
+} */
+
+.item-footer {
+  height: 4rem;
+  background-color: #BF364F !important;
+  color: #ffffff !important;
+}
+
+.item-footer:hover {
+  background-color: #F2F2F2 !important;
+  color: #BF364F !important;
+}

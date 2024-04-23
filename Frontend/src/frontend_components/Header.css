@@ -1,0 +1,21 @@
+/* .nav-link-hover:hover {
+  background-color: #D8854F;
+  color: #000000; 
+  
+} */
+
+.nav-link-hover {
+  background-color: transparent;
+  color: #000000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link-hover:hover {
+  background-color: #F26430;
+  color: #0000;
+}
+
+
+.nav-link {
+  height: 80px;
+}

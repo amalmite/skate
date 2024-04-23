@@ -1,0 +1,17 @@
+.add{
+  margin-top: -8.7% !important;
+  padding: 5%;
+  display: flex;
+  justify-content: center;
+  gap: 3.5%;
+
+}
+@media (max-width: 768px) {
+    .add {
+      margin-top: -4% !important; 
+    }
+  }
+
+  body{
+    font-family:'Times New Roman', Times, serif;
+  }

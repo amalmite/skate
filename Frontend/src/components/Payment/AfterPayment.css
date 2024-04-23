@@ -1,0 +1,15 @@
+.after-main{
+    display: flex;
+    justify-content: center;
+    min-height:100% ;
+    padding: 5%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+}
+.after-card{
+    width: 90%;
+    max-width: 500px;
+    padding: 2%;
+}

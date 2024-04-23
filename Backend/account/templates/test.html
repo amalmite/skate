@@ -1,0 +1,16 @@
+{% extends layout_path %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}eCommerce Add Product - Apps{% endblock %}
+{% block content %}
+<h2>hello</h2>
+
+<h1>Create YourModel</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ product_form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
