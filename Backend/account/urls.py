@@ -10,12 +10,16 @@ router = DefaultRouter()
 
 
 urlpatterns = [
-    path('',testView.as_view(template_name="test.html"),name="test"),
-    path('try/',tryview.as_view(template_name="try.html"),name="try"),
+    path('',AdminDashboard.as_view(template_name="test.html"),name="test"),
+    path('admin_login/',AdminLoginView.as_view(template_name="Auth/admin_login.html"),name="admin_login"),
+    path('admin_profile/',AdminProfileView.as_view(template_name="Admin/admin_profile.html"),name="admin_profile"),
+    path('admin_update/',AdminProfileUpdateView.as_view(template_name="Admin/edit_modal.html"),name="admin_update"),
+    
+    path('logout/',admin_logout,name="logout"), 
 
-    # path('',testapiview,name="test"),
+
+
     path('header-form/', TransactionAddView.as_view(template_name="header_form.html"), name="header-form"),
-
 
     path('session_create/', SessionCreateView.as_view(template_name="Session/create_session.html"), name="session_create"),
     path('session_list/', SessionListView.as_view(template_name = "Session/list_session.html"), name="session_list"),
@@ -42,7 +46,6 @@ urlpatterns = [
 
     path('inedx/',index,name="index"),
     path('dashboard/',dashboard_crm,name="dashboard-crm"),
-    path('logout/',logout_admin,name="logout"),
 
 
 

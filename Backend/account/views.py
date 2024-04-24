@@ -17,10 +17,11 @@ from rest_framework import viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from icerink.settings import ALLOWED_HOSTS
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login,logout
 from django.shortcuts import redirect
 
 from django.views.generic import TemplateView
@@ -30,6 +31,55 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.views.generic import TemplateView
 from web_project import TemplateLayout
+from web_project.template_helpers.theme import TemplateHelper
+
+
+class AdminLoginView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+
+        context.update(
+            {
+                "layout_path": TemplateHelper.set_layout("layout_blank.html", context),
+            }
+        )
+
+        return context
+    
+    def post(self, request):
+        username = request.POST.get("email-username")
+        password = request.POST.get("password")
+
+        if not (username and password):
+            messages.error(request, "Please enter your username and password.")
+            return redirect("admin_login")
+
+        if "@" in username:
+            user_email = User.objects.filter(email=username).first()
+            if user_email is None:
+                messages.error(request, "Please enter a valid email.")
+                return redirect("admin_login")
+            username = user_email.username
+
+        user_email = User.objects.filter(username=username).first()
+        if user_email is None:
+            messages.error(request, "Please enter a valid username.")
+            return redirect("admin_login")
+
+        authenticated_user = authenticate(request, username=username, password=password)
+        if authenticated_user is not None:
+            login(request, authenticated_user)
+            return redirect("test")
+        else:
+            messages.error(request, "Please enter a valid username.")
+            return redirect("admin_login")
+
+
+def admin_logout(request):
+    logout(request)
+    messages.success(request, 'Logout Successfully')
+    return redirect('admin_login')
+
 
 
 
@@ -224,11 +274,56 @@ class ProductUpdateView(TemplateView):
 
 
 
-
-class testView(TemplateView):
+class AdminDashboard(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  
+        return super().dispatch(request, *args, **kwargs)
+
+    
+class AdminProfileView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        context.update({
+            "get_profile": self.get_profile_data(),
+
+        })
+        return context
+
+    def get_profile_data(self):
+        return User.objects.filter(id=self.request.user.id).first()
+    
+class AdminProfileUpdateView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        print('kkkkkkkkk',self.request.user)
+        user = get_object_or_404(User, pk=self.request.user.id)
+        form = AdminProfileForm(instance=user)
+        context['form'] = form
+        return context
+    
+
+    
+    # def post(self, request, *args, **kwargs):
+    #     user = get_object_or_404(User, pk=self.request.user.id)
+    #     form = AdminProfileForm(request.POST, instance=user)
+    #     if admin_form.is_valid():
+    #         user = admin_form.save(commit=False)
+    #         user.save()
+    #         messages.success(request, 'Profile updated successfully.')
+    #         return redirect('admin_profile')  
+    #     else:
+    #         messages.error(request, 'Profile updated failed . Enter valid data')
+    #         return redirect('admin_profile')  
+
+
+
+
+
 class tryview(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
@@ -284,9 +379,6 @@ def index(request):
 def dashboard_crm(request):
     return HttpResponse('hello')
 
-def logout_admin(request):
-    logout(request)
-    return redirect('index') 
 
 
 

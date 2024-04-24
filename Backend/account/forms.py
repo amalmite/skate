@@ -80,3 +80,8 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = '__all__'
+
+class AdminProfileForm(forms.ModelForm):
+    class Meta:
+        model =  User
+        fields ='__all__'
