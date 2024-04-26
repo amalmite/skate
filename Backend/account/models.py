@@ -37,9 +37,11 @@ class Mall(models.Model):
 class Tax(models.Model):
     full_name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=255)
-    tax_percentage_checkbox = models.BooleanField(default=False)
+    tax_percentage_checkbox = models.BooleanField(default=True)
     tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     fixed_price_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"Tax {self.full_name}"

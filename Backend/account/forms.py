@@ -84,4 +84,49 @@ class TransactionForm(forms.ModelForm):
 class AdminProfileForm(forms.ModelForm):
     class Meta:
         model =  User
-        fields ='__all__'
+        fields =['email','first_name','last_name','username','phone_number']
+        widgets = {
+        'first_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'First Name'}),
+        'last_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Last Name'}),
+        'username': forms.TextInput(attrs={'class': 'form-control','placeholder':'Username'}),
+        'email': forms.TextInput(attrs={'class': 'form-control','placeholder':'Email'}),
+        'phone_number': forms.TextInput(attrs={'class': 'form-control','placeholder':'Phone'}),
+
+        }
+
+
+
+class CompanyGroupForm(forms.ModelForm):
+    class Meta:
+        model = CompanyGroup
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Name'}),
+            'email': forms.TextInput(attrs={'class': 'form-control','placeholder':'Email'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control','placeholder':'Mobile Number'}),
+            'address': forms.Textarea(attrs={'class': 'form-control h-px-100', 'rows': '3','placeholder':'Address'}),
+            }
+
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+class MallForm(forms.ModelForm):
+    class Meta:
+        model = Mall
+        fields = '__all__'
+
+
+class TaxForm(forms.ModelForm):
+    class Meta:
+        model = Tax
+        fields = ['full_name','short_name','tax_percentage','fixed_price_tax_amount','status']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Full Name'}),
+            'short_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Short Name'}),
+            'tax_percentage': forms.TextInput(attrs={'class': 'form-control','placeholder':'Tax Percentage'}),
+            'fixed_price_tax_amount': forms.TextInput(attrs={'class': 'form-control','placeholder':'Fixed price tax'}),
+            'status': forms.Select(choices=((True, 'Active'), (False, 'Inactive')), attrs={'class': 'form-control'}),
+            }

@@ -10,29 +10,44 @@ router = DefaultRouter()
 
 
 urlpatterns = [
-    path('',AdminDashboard.as_view(template_name="test.html"),name="test"),
+    path('',AdminDashboard.as_view(template_name="test.html"),name="admin_home"),
     path('admin_login/',AdminLoginView.as_view(template_name="Auth/admin_login.html"),name="admin_login"),
     path('admin_profile/',AdminProfileView.as_view(template_name="Admin/admin_profile.html"),name="admin_profile"),
-    path('admin_update/',AdminProfileUpdateView.as_view(template_name="Admin/edit_modal.html"),name="admin_update"),
-    
+    path('admin_update/',AdminProfileUpdateView.as_view(template_name="Admin/edit_modal.html"),name="admin_update"), 
     path('logout/',admin_logout,name="logout"), 
 
 
+    path('company_create/',CompanyGroupCreationView.as_view(template_name="Company/create_company.html"),name="company_create"),
+    path('company_update/<int:id>/',CompanyGroupUpdateView.as_view(template_name="Company/update_company.html"),name="company_update"),
+    path('company_detail/<int:id>/',CompanyDetailView.as_view(template_name="Company/list_company.html"),name="company_detail"),
 
-    path('header-form/', TransactionAddView.as_view(template_name="header_form.html"), name="header-form"),
+    path('tax_create/',TaxCreateView.as_view(template_name="Company/create_tax.html"),name="tax_create"),
+    path('tax_update/<int:id>/',TaxUpdateView.as_view(template_name="Company/update_tax.html"),name="tax_update"),
+    path('tax_list/',TaxListView.as_view(template_name="Company/list_tax.html"),name="tax_list"),
+
+
+ 
+
+
 
     path('session_create/', SessionCreateView.as_view(template_name="Session/create_session.html"), name="session_create"),
     path('session_list/', SessionListView.as_view(template_name = "Session/list_session.html"), name="session_list"),
     path('session_update/<int:id>/', SessionUpdateView.as_view(template_name = "Session/update_session.html"), name="session_update"),
-
     path('sessio_schedule/', SessionSchedule.as_view(template_name="Session/session_schedule.html"), name="session_schedule"),
     
+
     path('product_create/', ProductCreateView.as_view(template_name="Product/create_product.html"), name="product_create"),
+    path('product_list/', ProductListView.as_view(template_name="Product/list_product.html"), name="product_list"),
     path('product_update/<int:id>/', ProductUpdateView.as_view(template_name="Product/update_product.html"), name="product_update"),
 
-    path('product_list/', ProductListView.as_view(template_name="Product/list_product.html"), name="product_list"),
+
+    
 
 
+
+
+
+    path('header-form/', TransactionAddView.as_view(template_name="header_form.html"), name="header-form"),
 
 
 

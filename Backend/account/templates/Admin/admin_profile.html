@@ -24,11 +24,33 @@
 
 {% block page_js %}
 {{ block.super }}
-<script src="{% static 'js/modal-edit-user.js' %}"></script>
+<script>
+  var toastElements = document.querySelectorAll('.toast');
+
+if (toastElements) {
+toastElements.forEach(function (element) {
+  var toast = new bootstrap.Toast(element);
+  toast.show();
+});
+}
+
+</script>
 <script src="{% static 'js/app-user-view-account.js' %}"></script>
 {% endblock page_js %}
 
 {% block content %}
+{% if messages %}
+<div class="toast-container end-0 m-1 me-4">
+  {% for message in messages %}
+  <div class="toast {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-warning{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-bs-delay="2000">
+    <div class="toast-body text-center text-white">
+      {{ message }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <h4 class="py-3 mb-4">
   <span class="text-muted fw-light">{% translate "Profile" %} /</span> {% translate "Profile" %}
 </h4>
@@ -60,10 +82,14 @@
                   <i class='mdi mdi-calendar-blank-outline me-1 mdi-20px'></i><span class="fw-medium"> {{get_profile.last_login}}</span></li>
               </ul>
             </div>
-             {% comment %} <a href="javascript:void(0)" class="btn btn-primary">
-              <i class='mdi mdi-account-check-outline me-1'></i>Connected
-            </a> {% endcomment %}
-            <a href="{% url 'admin_update' %}" class="btn btn-primary me-3" data-bs-target="#editUser" data-bs-toggle="modal">Edit</a>
+          <a href="{% url 'admin_update' %}" class="btn btn-primary">
+              <i class='mdi mdi-account-check-outline me-1'></i>Edit
+            </a>
+
+            <a href="{% url 'company_create' %}" class="btn btn-primary">
+              <i class='mdi mdi-account-check-outline me-1'></i>Add Company
+            </a>
+
 
           
           </div>
@@ -144,6 +170,35 @@
     <!--/ Profile Overview -->
   </div>
   <div class="col-xl-8 col-lg-7 col-md-7">
+      <div class="row text-nowrap">
+        {% for company in get_company  %}
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="card-icon mb-3">
+              <div class="avatar">
+                <div class="avatar-initial rounded bg-label-primary">
+                  <img src="{{ company.logo.url }}" alt="logo">
+              </div>
+              
+            </div>
+            <div class="card-info">
+              <a href="{% url 'company_detail' company.id %}">
+                <h4 class="card-title mb-3">{{ company.name }}</h4>
+                <div class="d-flex align-items-end mb-1 gap-1">
+                    <h4 class="text-primary mb-0">Email</h4>
+                    <p class="mb-0">{{ company.email }}</p>
+                </div>
+                <p class="mb-0 text-truncate">{{ company.address }}</p>
+            </a>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+      {% endfor %}
     <!-- Activity Timeline -->
     <!-- <div class="card card-action mb-4">
       <div class="card-header align-items-center">
@@ -235,7 +290,6 @@
     <!--/ Projects table -->
   </div>
 </div>
-{% include "Admin/edit_modal.html" %}
 
 <!--/ User Profile Content -->
 {% endblock %}

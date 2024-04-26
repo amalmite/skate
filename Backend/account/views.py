@@ -33,6 +33,7 @@ from django.views.generic import TemplateView
 from web_project import TemplateLayout
 from web_project.template_helpers.theme import TemplateHelper
 
+from django.shortcuts import render, redirect, get_object_or_404
 
 class AdminLoginView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -69,7 +70,7 @@ class AdminLoginView(TemplateView):
         authenticated_user = authenticate(request, username=username, password=password)
         if authenticated_user is not None:
             login(request, authenticated_user)
-            return redirect("test")
+            return redirect("admin_home")
         else:
             messages.error(request, "Please enter a valid username.")
             return redirect("admin_login")
@@ -290,6 +291,8 @@ class AdminProfileView(TemplateView):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         context.update({
             "get_profile": self.get_profile_data(),
+            "get_company": self.get_company(),
+
 
         })
         return context
@@ -297,31 +300,139 @@ class AdminProfileView(TemplateView):
     def get_profile_data(self):
         return User.objects.filter(id=self.request.user.id).first()
     
+    def get_company(self):
+        return CompanyGroup.objects.all()
+    
+
 class AdminProfileUpdateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        print('kkkkkkkkk',self.request.user)
         user = get_object_or_404(User, pk=self.request.user.id)
-        form = AdminProfileForm(instance=user)
-        context['form'] = form
+        admin_form = AdminProfileForm(instance=user)
+        context['admin_form'] = admin_form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(User, pk=self.request.user.id)
+        admin_form = AdminProfileForm(request.POST, instance=user)
+        if admin_form.is_valid():
+            user = admin_form.save(commit=False)
+            user.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('admin_profile')  
+        else:
+            for field, errors in admin_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('admin_update')
+
+
+class CompanyGroupCreationView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        company_form = CompanyGroupForm()
+        context['company_form'] = company_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        company_form = CompanyGroupForm(request.POST, request.FILES)
+        if company_form.is_valid():
+            company =company_form.save()
+            messages.success(request, 'Company added successfully.')
+            return redirect('company_detail', id=company.id)
+        else:
+            messages.error(request, 'Failed to add product. Please enter valid data.')
+            return redirect('company_create')
+        
+class CompanyGroupUpdateView(TemplateView):
+    def get_context_data(self,id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        company = get_object_or_404(CompanyGroup,pk=id)
+        company_form = CompanyGroupForm(instance=company)
+        context['company_form'] = company_form
+        return context
+    
+    def post(self, request,id, *args, **kwargs):
+        company = get_object_or_404(CompanyGroup,id=id)
+
+        company_form = CompanyGroupForm(request.POST, request.FILES,instance=company)
+        if company_form.is_valid():
+            company = company_form.save()
+            messages.success(request, 'Company updated successfully.')
+            return redirect('company_detail',id=company.id)
+        else:
+            messages.error(request, 'Failed to update product. Please enter valid data.')
+            return redirect('company_update',id=id)
+        
+
+
+
+
+class CompanyDetailView(TemplateView):
+    def get_context_data(self,id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        company = get_object_or_404(CompanyGroup,id=id)
+        context ['company'] = company
         return context
     
 
+
+
+
+class TaxCreateView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        tax_form = TaxForm()
+        context ['tax_form'] = tax_form
+        return context
     
-    # def post(self, request, *args, **kwargs):
-    #     user = get_object_or_404(User, pk=self.request.user.id)
-    #     form = AdminProfileForm(request.POST, instance=user)
-    #     if admin_form.is_valid():
-    #         user = admin_form.save(commit=False)
-    #         user.save()
-    #         messages.success(request, 'Profile updated successfully.')
-    #         return redirect('admin_profile')  
-    #     else:
-    #         messages.error(request, 'Profile updated failed . Enter valid data')
-    #         return redirect('admin_profile')  
+    def post(self, request, *args, **kwargs):
+        tax_form = TaxForm(request.POST)
+        if tax_form.is_valid():
+            tax_form.save()
+            messages.success(request, 'Tax added successfully.')
+            return redirect('tax_list')
+        else:
+            for field, errors in tax_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('tax_create')
+        
+class TaxListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        tax = self.get_total_tax()
+        context.update({
+            "tax": tax
+        })
+        return context
+
+    def get_total_tax(self):
+        return Tax.objects.all().order_by('id')
 
 
 
+class TaxUpdateView(TemplateView):
+    def get_context_data(self, id,**kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        tax = get_object_or_404(Tax, pk=id)
+        tax_form = TaxForm(instance=tax)
+        context['tax_form'] = tax_form
+        return context
+    
+    def post(self, request,id, *args, **kwargs):
+        tax = get_object_or_404(Tax, pk=id)
+        tax_form = TaxForm(request.POST,instance=tax)
+        if tax_form.is_valid():
+            tax = tax_form.save(commit=False)
+            tax.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('tax_list')  
+        else:
+            for field, errors in tax_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('tax_update')
 
 
 class tryview(TemplateView):
@@ -385,7 +496,6 @@ def dashboard_crm(request):
 
 
 
-from django.shortcuts import render, redirect, get_object_or_404
 
 
 # def SessionDelete(request,id):

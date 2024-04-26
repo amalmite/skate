@@ -14,7 +14,7 @@
       <!--  Brand demo (display only for navbar-full and hide on below xl) -->
       {% if navbar_full %}
       <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
-        <a href="{% url 'index' %}" class="app-brand-link gap-2">
+        <a href="{% url 'admin_home' %}" class="app-brand-link gap-2">
           <span class="app-brand-logo demo">
             {% include 'partials/logo.html' with bgcolor="#666CFF" %}
           </span>
@@ -138,14 +138,14 @@
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-calendar fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Calendar</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Calendar</a>
                     <small class="text-muted mb-0">Appointments</small>
                   </div>
                   <div class="dropdown-shortcuts-item col">
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-file-document-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Invoice App</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Invoice App</a>
                     <small class="text-muted mb-0">Manage Accounts</small>
                   </div>
                 </div>
@@ -154,14 +154,14 @@
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-account-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">User App</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">User App</a>
                     <small class="text-muted mb-0">Manage Users</small>
                   </div>
                   <div class="dropdown-shortcuts-item col">
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-shield-check-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Role Management</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Role Management</a>
                     <small class="text-muted mb-0">Permission</small>
                   </div>
                 </div>
@@ -170,14 +170,14 @@
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-chart-pie-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Dashboard</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Dashboard</a>
                     <small class="text-muted mb-0">Analytics</small>
                   </div>
                   <div class="dropdown-shortcuts-item col">
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-cog-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Setting</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Setting</a>
                     <small class="text-muted mb-0">Account Settings</small>
                   </div>
                 </div>
@@ -186,14 +186,14 @@
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-help-circle-outline fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">FAQs</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">FAQs</a>
                     <small class="text-muted mb-0">FAQs & Articles</small>
                   </div>
                   <div class="dropdown-shortcuts-item col">
                     <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
                       <i class="mdi mdi-dock-window fs-4"></i>
                     </span>
-                    <a href="{% url 'index' %}" class="stretched-link">Modals</a>
+                    <a href="{% url 'admin_home' %}" class="stretched-link">Modals</a>
                     <small class="text-muted mb-0">Useful Popups</small>
                   </div>
                 </div>
@@ -386,7 +386,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_home' %}">
                   <div class="d-flex">
                     <div class="flex-shrink-0 me-3">
                       <div class="avatar avatar-online">
@@ -411,19 +411,19 @@
                 <div class="dropdown-divider"></div>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_profile' %}">
                   <i class="mdi mdi-account-outline me-2"></i>
                   <span class="align-middle">My Profile</span>
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_home' %}">
                   <i class="mdi mdi-cog-outline me-2"></i>
                   <span class="align-middle">Settings</span>
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_home' %}">
                   <span class="d-flex align-items-center align-middle">
                     <i class="flex-shrink-0 mdi mdi-credit-card-outline me-2"></i>
                     <span class="flex-grow-1 align-middle ms-1">Billing</span>
@@ -435,13 +435,13 @@
                 <div class="dropdown-divider"></div>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_home' %}">
                   <i class="mdi mdi-help-circle-outline me-2"></i>
                   <span class="align-middle">FAQ</span>
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'index' %}">
+                <a class="dropdown-item" href="{% url 'admin_home' %}">
                   <i class="mdi mdi-currency-usd me-2"></i>
                   <span class="align-middle">Pricing</span>
                 </a>
@@ -459,7 +459,7 @@
                   <span class="text-success"><i class='mdi mdi-circle'></i></span>
                 </span>
                 {% else %}
-                <a class="dropdown-item d-flex justify-content-between align-content-center" href="{% url 'index' %}">
+                <a class="dropdown-item d-flex justify-content-between align-content-center" href="{% url 'admin_home' %}">
                   <span>
                     <i class='mdi mdi-account-circle me-2'></i>
                     <span class="align-middle">Not Verified</span>
