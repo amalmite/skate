@@ -1,9 +1,36 @@
 {
   "menu": [
+    {
+      "name": "Company Dashboard",
+      "icon": "menu-icon tf-icons mdi mdi-domain",
+      "slug": "from",
+      "submenu": [
+        {
+          "url": "location_list",
+          "name": "Location",
+          "slug": "location_list"
+        },
+        {
+          "url": "mall_list",
+          "name": "Mall",
+          "slug": "mall_list"
+        },
+        {
+          "url": "business_profile_list",
+          "name": "Business Profile",
+          "slug": "business_profile_list"
+        },
+        {
+          "url": "tax_list",
+          "name": "List Tax",
+          "slug": "tax_list"
+         }  
+      ]
+    },
   
     {
       "name": "Slider",
-      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "icon": "menu-icon tf-icons mdi mdi-view-carousel",
       "slug": "from",
       "submenu": [
         {
@@ -16,7 +43,7 @@
     },
     {
       "name": "Session",
-      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "icon": "menu-icon tf-icons mdi mdi-google-classroom",
       "slug": "session",
       "submenu": [
         {
@@ -38,7 +65,7 @@
       ]
     },{
       "name": "Product",
-      "icon": "menu-icon tf-icons mdi mdi-window-maximize",
+      "icon": "menu-icon tf-icons mdi mdi-package-variant",
       "slug": "product",
       "submenu": [
         {

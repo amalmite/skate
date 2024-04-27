@@ -22,6 +22,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import authenticate, login,logout
+
 from django.shortcuts import redirect
 
 from django.views.generic import TemplateView
@@ -34,6 +35,9 @@ from web_project import TemplateLayout
 from web_project.template_helpers.theme import TemplateHelper
 
 from django.shortcuts import render, redirect, get_object_or_404
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AdminLoginView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -50,30 +54,33 @@ class AdminLoginView(TemplateView):
     def post(self, request):
         username = request.POST.get("email-username")
         password = request.POST.get("password")
-
         if not (username and password):
             messages.error(request, "Please enter your username and password.")
             return redirect("admin_login")
 
-        if "@" in username:
-            user_email = User.objects.filter(email=username).first()
-            if user_email is None:
-                messages.error(request, "Please enter a valid email.")
-                return redirect("admin_login")
-            username = user_email.username
-
-        user_email = User.objects.filter(username=username).first()
-        if user_email is None:
-            messages.error(request, "Please enter a valid username.")
+        user = self.get_user(username)
+        if user is None:
+            messages.error(request, "Invalid username or password.")
             return redirect("admin_login")
+        print(user,'usert')
 
-        authenticated_user = authenticate(request, username=username, password=password)
+        authenticated_user = authenticate(request, username=user.username)
+        print(authenticated_user)
         if authenticated_user is not None:
             login(request, authenticated_user)
             return redirect("admin_home")
         else:
-            messages.error(request, "Please enter a valid username.")
+            messages.error(request, "Invalid username or password")
+            logger.error("Authentication failed for user: %s", username)  
+
             return redirect("admin_login")
+        
+    def get_user(self, username):
+        if "@" in username:
+            user = User.objects.filter(email=username).first()
+        else:
+            user = User.objects.filter(username=username).first()
+        return user
 
 
 def admin_logout(request):
@@ -377,8 +384,6 @@ class CompanyDetailView(TemplateView):
     
 
 
-
-
 class TaxCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
@@ -433,6 +438,170 @@ class TaxUpdateView(TemplateView):
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
             return redirect('tax_update')
+
+
+
+class LocationcreateView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        location_form = LocationForm()
+        context['location_form'] = location_form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        location_form = LocationForm(request.POST)
+        if location_form.is_valid():
+            location_form.save()
+            messages.success(request, 'Mall added successfully.')
+            return redirect('location_list')
+        else:
+            for field, errors in location_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('mall_create')
+        
+class LocationListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        location = self.get_location()
+        context.update({
+            "locations": location
+        })
+        return context
+
+    def get_location(self):
+        return Location.objects.all().order_by('id')
+    
+class LocationUpdateView(TemplateView):
+    def get_context_data(self, id,**kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        location = get_object_or_404(Location, pk=id)
+        location_form = LocationForm(instance=location)
+        context['location_form'] = location_form
+        return context
+    
+    def post(self, request,id, *args, **kwargs):
+        location = get_object_or_404(Location, pk=id)
+        location_form = LocationForm(request.POST,instance=location)
+        if location_form.is_valid():
+            location = location_form.save(commit=False)
+            location.save()
+            messages.success(request, 'Location updated successfully.')
+            return redirect('location_list')  
+        else:
+            for field, errors in location_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('location_update',id=id)
+        
+
+class MallcreateView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        mall_form = MallForm()
+        context['mall_form'] = mall_form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        mall_form = MallForm(request.POST,request.FILES)
+        if mall_form.is_valid():
+            mall_form.save()
+            messages.success(request, 'Mall added successfully.')
+            return redirect('mall_list')
+        else:
+            for field, errors in mall_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('mall_create')
+        
+
+class MallListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        context.update({
+            "malls": self.get_mall(),
+        })
+        return context
+
+    def get_mall(self):
+        return Mall.objects.all()
+    
+
+class MallUpdateView(TemplateView):
+    def get_context_data(self, id,**kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        mall = get_object_or_404(Mall, pk=id)
+        mall_form = MallForm(instance=mall)
+        context['mall_form'] = mall_form
+        return context
+    
+    def post(self, request,id, *args, **kwargs):
+        mall = get_object_or_404(Mall, pk=id)
+        mall_form = MallForm(request.POST,request.FILES,instance=mall)
+        if mall_form.is_valid():
+            location = mall_form.save(commit=False)
+            location.save()
+            messages.success(request, 'Mall updated successfully.')
+            return redirect('mall_list')  
+        else:
+            for field, errors in mall_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('mall_update',id=id)
+        
+
+class BusinessProfileCreateView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        form = BusinessProfileForm()
+        context['form'] = form
+        return context
+        
+    def post(self, request, *args, **kwargs):
+        form = BusinessProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            business = form.save(commit=False)
+            business.save()
+            messages.success(request, 'Business added successfully.')
+            return redirect('business_profile_list')  
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('business_profile_create')
+        
+class BusinessProfileListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        context.update({
+            "business_profiles": self.get_business_profiles(),
+        })
+        return context
+
+    def get_business_profiles(self):
+        return BusinessProfile.objects.all()
+    
+
+class BusinessProfileUpdateView(TemplateView):
+    def get_context_data(self,id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        business = get_object_or_404(BusinessProfile,id=id)
+        form = BusinessProfileForm(instance=business)
+        context['form'] = form
+        return context
+        
+    def post(self, request,id, *args, **kwargs):
+        business = get_object_or_404(BusinessProfile,id=id)
+        form = BusinessProfileForm(request.POST,request.FILES,instance=business)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Business updates successfully.')
+            return redirect('business_profile_list')  
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect('business_profile_update',id=id)
 
 
 class tryview(TemplateView):

@@ -107,18 +107,6 @@ class CompanyGroupForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'class': 'form-control h-px-100', 'rows': '3','placeholder':'Address'}),
             }
 
-
-class LocationForm(forms.ModelForm):
-    class Meta:
-        model = Location
-        fields = '__all__'
-
-class MallForm(forms.ModelForm):
-    class Meta:
-        model = Mall
-        fields = '__all__'
-
-
 class TaxForm(forms.ModelForm):
     class Meta:
         model = Tax
@@ -130,3 +118,51 @@ class TaxForm(forms.ModelForm):
             'fixed_price_tax_amount': forms.TextInput(attrs={'class': 'form-control','placeholder':'Fixed price tax'}),
             'status': forms.Select(choices=((True, 'Active'), (False, 'Inactive')), attrs={'class': 'form-control'}),
             }
+        
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = ['name', 'emirates', 'country', 'google_map']
+        widgets = {
+            'google_map': forms.TextInput(attrs={'class': 'location_field' 'form-control','placeholder':'Map'}),
+            'name':forms.TextInput(attrs={'class': 'form-control','placeholder':'Name'}),
+            'emirates':forms.TextInput(attrs={'class': 'form-control','placeholder':'Emirates'}),
+            'country':forms.TextInput(attrs={'class': 'form-control','placeholder':'Country'}),
+        }
+
+
+class MallForm(forms.ModelForm):
+    class Meta:
+        model = Mall
+        fields = ['name','location','image']
+        widgets = {
+            'name':forms.TextInput(attrs={'class': 'form-control','placeholder':'Name'}),
+            'location':forms.Select(attrs={'class': 'form-control','placeholder':'Location'}),
+        }
+
+class BusinessProfileForm(forms.ModelForm):
+    class Meta:
+        model = BusinessProfile
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name'}),
+            'mall':forms.Select(attrs={'class': 'form-control'}),
+            'select_tax': forms.SelectMultiple(attrs={'class': 'form-control h-100'}),
+            'company_group':forms.Select(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'currency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Currency'}),
+            'trn_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'TRN No'}),
+            'tax_reporting_dates': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tax Reporting Dates','type':'date'}),
+            'license_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'License No'}),
+            'expiry': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Expiry', 'type': 'date'}),
+            'operational_hours_start': forms.TimeInput(attrs={'class': 'form-control', 'placeholder': 'Operational Hours Start', 'type': 'time'}),
+            'operational_hours_end': forms.TimeInput(attrs={'class': 'form-control', 'placeholder': 'Operational Hours End', 'type': 'time'}),
+            'report_generation_start_time': forms.TimeInput(attrs={'class': 'form-control', 'placeholder': 'Report Generation Start Time', 'type': 'time'}),
+            'report_generation_end_time': forms.TimeInput(attrs={'class': 'form-control', 'placeholder': 'Report Generation End Time', 'type': 'time'}),
+            'invoice_heading': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Invoice Heading'}),
+            'address': forms.Textarea(attrs={'class': 'form-control h-px-100', 'rows': 3 , 'placeholder': 'Address'}),
+            'logo': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'status': forms.Select(attrs={'class': 'form-control'}, choices=((True, 'Active'), (False, 'Inactive'))),
+        }

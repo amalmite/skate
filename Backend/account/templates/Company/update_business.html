@@ -1,0 +1,203 @@
+{% extends layout_path %} 
+{% load static %} 
+{% load i18n %}
+ {% block title%}Business Profile Updation{% endblock %} {% block vendor_css %} {{ block.super }}
+<link rel="stylesheet" href="{% static 'vendor/libs/select2/select2.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/@form-validation/umd/styles/index.min.css' %}"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/flatpickr/flatpickr.css' %}"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/bootstrap-select/bootstrap-select.css'%}"
+/>
+<link rel="stylesheet" href="{% static 'vendor/libs/dropzone/dropzone.css'%}" />
+<link
+  rel="stylesheet"
+  href="{% static 'vendor/libs/bootstrap-maxlength/bootstrap-maxlength.css'%} "
+/>
+{% endblock vendor_css %} {% block vendor_js %} {{ block.super }}
+<script src="{% static 'vendor/libs/select2/select2.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/bundle/popular.min.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js' %}"></script>
+<script src="{% static 'vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js' %}"></script>
+<script src="{% static 'vendor/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'vendor/libs/bootstrap-select/bootstrap-select.js'%}"></script>
+<script src="{% static 'vendor/libs/dropzone/dropzone.js'%}"></script>
+<script src="{% static 'vendor/libs/bootstrap-maxlength/bootstrap-maxlength.js'%}"></script>
+
+{% endblock vendor_js %}
+ {% block page_js %} 
+ {{ block.super }}
+ <script>
+  var toastElements = document.querySelectorAll('.toast');
+
+if (toastElements) {
+toastElements.forEach(function (element) {
+  var toast = new bootstrap.Toast(element);
+  toast.show();
+});
+}
+
+</script>
+  {% endblock page_js %} 
+  {% block content %}
+
+  {% if messages %}
+  <div class="toast-container end-0 m-1 me-4">
+    {% for message in messages %}
+    <div class="toast {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% else %}bg-warning{% endif %}" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-bs-delay="2000">
+      <div class="toast-body text-center text-white">
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+<h4 class="py-3 mb-4">
+  <span class="text-muted fw-light">{% translate "Company" %} /</span>
+  {%translate " Business Profile    " %}{%translate " Updation " %}
+</h4>
+<div class="card">
+  <div class="card-body mt-4">
+    <form
+      class="add-transactions pt-0"
+      id="addTransactionForm"
+      action=""
+      method="post"
+     enctype="multipart/form-data"
+
+    >
+      {% csrf_token %}
+
+      <div class="form-floating form-floating-outline mb-4">
+        {{ form.name }}
+        <label for="company_name">{% translate 'Business Name' %}</label>
+      </div> 
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.mall }}
+            <label for="company_name">{% translate 'Select Mall' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.company_group }}
+            <label for="company_name">{% translate 'Select Company' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.phone_number }}
+            <label for="company_name">{% translate 'Phone Number' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.email }}
+            <label for="company_name">{% translate 'Email' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.currency }}
+            <label for="company_name">{% translate 'Currency' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.trn_no }}
+            <label for="company_name">{% translate 'TRN Number' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.tax_reporting_dates }}
+            <label for="company_name">{% translate 'Tax Reporting Dates' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.expiry }}
+            <label for="company_name">{% translate 'Expiry' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.operational_hours_start }}
+            <label for="company_name">{% translate 'Operational hour Start' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.operational_hours_end }}
+            <label for="company_name">{% translate 'Operational hour End' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.report_generation_start_time }}
+            <label for="company_name">{% translate 'Report Generation Start Time' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.report_generation_end_time }}
+            <label for="company_name">{% translate 'Report Generation End Time' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.invoice_heading }}
+            <label for="company_name">{% translate 'Invoice Heading' %}</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating form-floating-outline mb-4">
+            {{ form.status }}
+            <label for="company_name">{% translate 'status' %}</label>
+        </div>
+    </div>
+</div>
+
+<div class="form-floating form-floating-outline mb-4">
+    {{ form.select_tax }}
+    <label for="company_name">{% translate 'Select Tax' %}</label>
+</div>
+<div class="form-floating form-floating-outline mb-4">
+    {{ form.license_no }}
+    <label for="company_name">{% translate 'License Number' %}</label>
+</div>
+<div class="form-floating form-floating-outline mb-4">
+    {{ form.address }}
+    <label for="company_name">{% translate 'Address' %}</label>
+</div>
+<div class=" mb-4">
+    {{ form.logo }}
+</div>
+      <div>
+        <button
+          type="submit"
+          class="btn btn-primary me-sm-3 me-1"
+          name="submitButton"
+        >
+          {% translate 'Submit'%}
+        </button>
+                 <a href="{% url 'business_profile_list' %}" class="btn btn-primary me-sm-3 me-1"
+        >{% trans 'Back' %}</a
+      >
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+{% endblock %}

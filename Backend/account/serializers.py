@@ -60,7 +60,7 @@ class LoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         user = authenticate(**data)
-        if user and user.is_user and user.is_active and user.email_activation:
+        if user and user.is_user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect username or password.")
 

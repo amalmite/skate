@@ -5,7 +5,7 @@ from rest_framework.exceptions import AuthenticationFailed
 User = get_user_model()
 
 
-class EmailOrUsernameModelBackend(ModelBackend):
+# class EmailOrUsernameModelBackend(ModelBackend):
     # def authenticate(self, request, username=None, password=None, **kwargs):
     #     try:
     #         user = User.objects.get(email=username)
@@ -21,29 +21,29 @@ class EmailOrUsernameModelBackend(ModelBackend):
     #     else:
     #         return None
 
-    def authenticate(
-        self, request, username=None, email=None, password=None, **kwargs
-    ):
+    # def authenticate(
+    #     self, request, username=None, email=None, password=None, **kwargs
+    # ):
 
-        if email:
-            print("auth backends EMAIL code")
-            try:
-                user = User.objects.get(email=email)
+    #     if email:
+    #         print("auth backends EMAIL code")
+    #         try:
+    #             user = User.objects.get(email=email)
 
-                if user.check_password(password):
-                    return user
-                raise AuthenticationFailed("Password is not Correct")
+    #             if user.check_password(password):
+    #                 return user
+    #             raise AuthenticationFailed("Password is not Correct")
 
-            except User.DoesNotExist:
-                return None
+    #         except User.DoesNotExist:
+    #             return None
             
-        if username:
-            try:
-                user = User.objects.get(username=username)
+    #     if username:
+    #         try:
+    #             user = User.objects.get(username=username)
 
-                if user.check_password(password):
-                    return user
-                raise AuthenticationFailed("Password is not Correct")
+    #             if user.check_password(password):
+    #                 return user
+    #             raise AuthenticationFailed("Password is not Correct")
 
-            except User.DoesNotExist:
-                return None
+    #         except User.DoesNotExist:
+    #             return None

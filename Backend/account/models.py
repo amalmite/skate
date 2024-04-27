@@ -29,10 +29,10 @@ class Location(models.Model):
 class Mall(models.Model):
     name = models.CharField(max_length=255)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name="Mall Location", null=True)
-    picture = models.FileField(upload_to='mall/')
+    image = models.FileField(upload_to='mall/')
 
     def __str__(self):
-        return f"Mall details {self.name} "
+        return f"Mall details {self.name}"
 
 class Tax(models.Model):
     full_name = models.CharField(max_length=255)
@@ -65,6 +65,7 @@ class PaymentMode(models.Model):
 class BusinessProfile(models.Model):
     name = models.CharField(max_length=64, blank=False, default=None, null=True)
     mall = models.ForeignKey(Mall,on_delete=models.CASCADE)
+    company_group = models.ForeignKey(CompanyGroup,on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=25)
     email = models.EmailField()
     currency = models.CharField(max_length=25)
@@ -80,6 +81,7 @@ class BusinessProfile(models.Model):
     invoice_heading = models.CharField(max_length=255)
     address = models.TextField()
     logo = models.ImageField(upload_to='logo/')
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Business profile{self.name} {self.mall}"

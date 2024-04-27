@@ -25,6 +25,24 @@ urlpatterns = [
     path('tax_update/<int:id>/',TaxUpdateView.as_view(template_name="Company/update_tax.html"),name="tax_update"),
     path('tax_list/',TaxListView.as_view(template_name="Company/list_tax.html"),name="tax_list"),
 
+    path('location_create/',LocationcreateView.as_view(template_name = "Company/create_location.html"),name = "location_create"),
+    path('location_list/',LocationListView.as_view(template_name = "Company/list_location.html"),name = "location_list"),
+    path('location_update/<int:id>/',LocationUpdateView.as_view(template_name = "Company/update_location.html"),name = "location_update"),
+
+
+    path('mall_create/',MallcreateView.as_view(template_name = "Company/create_mall.html"),name = "mall_create"),
+    path('mall_list/',MallListView.as_view(template_name = "Company/list_mall.html"),name = "mall_list"),
+    path('mall_update/<int:id>/',MallUpdateView.as_view(template_name = "Company/update_mall.html"),name = "mall_update"),
+
+
+    path('business_profile_create/',BusinessProfileCreateView.as_view(template_name = "Company/create_business.html"),name = "business_profile_create"),
+    path('business_profile_list/',BusinessProfileListView.as_view(template_name = "Company/list_business.html"),name = "business_profile_list"),
+    path('business_profile_update/<int:id>/',BusinessProfileUpdateView.as_view(template_name = "Company/update_business.html"),name = "business_profile_update"),
+
+
+
+
+
 
  
 
