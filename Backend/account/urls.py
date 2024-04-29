@@ -136,12 +136,24 @@ urlpatterns = [
         ProductUpdateView.as_view(template_name="Product/update_product.html"),
         name="product_update",
     ),
+    path("module_create/" ,ModuleCreateListView.as_view(template_name = "Company/create_module.html"),name="module_create"),
+    path("module_list/" ,ModuleCreateListView.as_view(template_name = "Company/list_module.html"),name="module_list"),
+    path("module_update/<int:id>/" ,ModuleUpdateView.as_view(template_name = "Company/update_module.html"),name="module_update"),
+    path("module_delete/<int:id>/" ,module_delete,name="module_delete"),
+
+
+    path("role_create/" ,RoleCreateListView.as_view(template_name = "Company/create_role.html"),name="role_create"),
+    path("role_list/" ,RoleCreateListView.as_view(template_name = "Company/list_role.html"),name="role_list"),
+    path("role_update/<int:id>/" ,RoleUpdateView.as_view(template_name = "Company/update_role.html"),name="role_update"),
+    path("role_delete/<int:id>/" ,role_delete,name="role_delete"),
+
+
+
     path(
         "header-form/",
-        TransactionAddView.as_view(template_name="header_form.html"),
+        HeaderForm.as_view(template_name="header_form.html"),
         name="header-form",
     ),
-    # path('session/', create_session, name="session"),
     path("inedx/", index, name="index"),
     path("dashboard/", dashboard_crm, name="dashboard-crm"),
     path("api/product", include(router.urls)),

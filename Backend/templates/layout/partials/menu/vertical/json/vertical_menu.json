@@ -22,8 +22,18 @@
         },
         {
           "url": "tax_list",
-          "name": "List Tax",
+          "name": "Tax",
           "slug": "tax_list"
+         },
+         {
+          "url": "module_list",
+          "name": "Module",
+          "slug": "module_list"
+         },
+         {
+          "url": "role_list",
+          "name": "Role",
+          "slug": "role_list"
          }  
       ]
     },
@@ -46,14 +56,10 @@
       "icon": "menu-icon tf-icons mdi mdi-google-classroom",
       "slug": "session",
       "submenu": [
-        {
-          "url": "session_create",
-          "name": "Add Session",
-          "slug": "session_create"
-        },
+       
         {
           "url": "session_list",
-          "name": "List Session",
+          "name": " Sessions",
           "slug": "session_list"
         },
         {
@@ -68,14 +74,10 @@
       "icon": "menu-icon tf-icons mdi mdi-package-variant",
       "slug": "product",
       "submenu": [
-        {
-          "url": "product_create",
-          "name": "Add Product",
-          "slug": "product_create"
-        },
+
         {
           "url": "product_list",
-          "name": "Product List",
+          "name": "Product",
           "slug": "product_list"
         }
       ]

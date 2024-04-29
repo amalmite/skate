@@ -37,7 +37,7 @@ class Mall(models.Model):
     image = models.FileField(upload_to="mall/")
 
     def __str__(self):
-        return f"Mall details {self.name}"
+        return f"Mall  {self.name}"
 
 
 class Tax(models.Model):
@@ -93,15 +93,18 @@ class BusinessProfile(models.Model):
     status = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Business profile{self.name} {self.mall}"
+        return f"{self.name} {self.mall}"
 
 
 class Module(models.Model):
     URL_CHOICES = [
         ("/product/product/", "product"),
+        ("/product/product/", "session"),
     ]
     URL_NAMES = [
         ("product Report", "/product/product-report/"),
+        ("session Report", "/product/product-report/"),
+
     ]
     url = models.CharField(
         max_length=150, choices=URL_CHOICES, null=True, verbose_name="Page Name"

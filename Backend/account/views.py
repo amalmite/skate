@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.shortcuts import render, HttpResponse
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -603,6 +604,147 @@ class BusinessProfileUpdateView(TemplateView):
             return redirect("business_profile_update", id=id)
 
 
+
+class ModuleCreateListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        form = ModuleForm()
+        context['form'] = form
+        context.update(
+                    {
+                "modules": self.get_module(),
+            }
+        )
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        form = ModuleForm(request.POST)
+        if form.is_valid():
+            module = form.save(commit=False)
+            module.save()
+            messages.success(request, "Module added successfully.")
+            return redirect("module_list")
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect("module_create")
+    
+
+    def get_module(self):
+        return Module.objects.all()
+    
+class ModuleUpdateView(TemplateView):
+    def get_context_data(self,id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        module = get_object_or_404(Module,id = id)
+        form = ModuleForm(instance=module)
+        context['form'] = form
+        context['module'] = module
+
+        return context
+    
+    def post(self, request, id, *args, **kwargs):
+        module = get_object_or_404(Module,id = id)
+        form = ModuleForm(request.POST,instance=module)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Module updated successfully.")
+            return redirect("module_list")
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect("module_update",id=id)
+        
+        
+def module_delete(request, id, *args, **kwargs):
+    module = get_object_or_404(Module, id=id)
+    module.delete()
+    messages.success(request, "Module deleted successfully.")
+    return redirect("module_list")
+
+class RoleCreateListView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        form = RoleForm()
+        context['form'] = form
+        context.update(
+                    {
+                "roles": self.get_role(),
+            }
+        )
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        form = RoleForm(request.POST)
+        if form.is_valid():
+            role = form.save(commit=False)
+            role.save()
+            modules = form.cleaned_data.get("modules")
+            for module_name in modules:
+                try:
+                    module = Module.objects.filter(name=module_name).first()
+                    role.modules.add(module)
+                except Module.DoesNotExist:
+                    messages.error(request, f"No module with name '{module_name}' exists.")
+                except Module.MultipleObjectsReturned:
+                    messages.warning(request, f"Multiple modules found with name '{module_name}'. Please select the desired one.")
+            messages.success(request, "Role added successfully.")
+            return redirect("role_list")
+        else:
+            return redirect("role_create")
+
+
+    def get_role(self):
+        return Role.objects.all()
+
+class RoleUpdateView(TemplateView):
+    def get_context_data(self,id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        role = get_object_or_404(Role ,id =id)
+        form = RoleForm(instance=role)
+        context['form'] = form
+        context['role'] = role
+        return context
+    
+    def post(self, request, id ,*args, **kwargs):
+        role = get_object_or_404(Role ,id =id)
+        form = RoleForm(request.POST,instance=role)
+        if form.is_valid():
+            role = form.save(commit=False)
+            role.save()
+            modules = form.cleaned_data.get("modules")
+                
+            for module_name in modules:
+                try:
+                    module = Module.objects.filter(name=module_name).first()
+                    if module not in role.modules.all():
+                        role.modules.add(module)
+                    else:
+                        messages.warning(request, f"Module '{module_name}' is already associated with the role.")
+                except Module.DoesNotExist:
+                    messages.error(request, f"No module with name '{module_name}' exists.")
+                except Module.MultipleObjectsReturned:
+                    messages.warning(request, f"Multiple modules found with name '{module_name}'. Please select the desired one.")
+            role.save()
+            messages.success(request, "Role updated successfully.")
+            return redirect("role_list")
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+            return redirect("role_update",id=id)
+
+def role_delete(request, id, *args, **kwargs):
+    module = get_object_or_404(Role, id=id)
+    module.delete()
+    messages.success(request, "Role deleted successfully.")
+    return redirect("role_list")
+
+
+
+
 class tryview(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
@@ -621,32 +763,6 @@ class SessionSchedule(TemplateView):
         return context
 
 
-class TransactionAddView(TemplateView):
-    def get_context_data(self, **kwargs):
-        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        context["current_date"] = date.today().strftime("%Y-%m-%d")
-        return context
-
-    def post(self, request):
-        form = TransactionForm(request.POST)
-        if form.is_valid():
-            if not self.transaction_exists(form.cleaned_data):
-                form.save()
-                messages.success(request, "Transaction Added")
-            else:
-                messages.error(request, "Transaction already exists")
-        else:
-            messages.error(request, "Transaction Failed")
-        return redirect("index")
-
-    def transaction_exists(self, cleaned_data):
-        return Transaction.objects.filter(
-            customer__iexact=cleaned_data["customer"],
-            transaction_date=cleaned_data["transaction_date"],
-            due_date=cleaned_data["due_date"],
-            total=cleaned_data["total"],
-            status=cleaned_data["status"],
-        ).exists()
 
 
 def index(request):

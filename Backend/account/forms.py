@@ -201,11 +201,6 @@ class ProductUpdateForm(forms.ModelForm):
         }
 
 
-class TransactionForm(forms.ModelForm):
-    class Meta:
-        model = Transaction
-        fields = "__all__"
-
 
 class AdminProfileForm(forms.ModelForm):
     class Meta:
@@ -397,4 +392,36 @@ class BusinessProfileForm(forms.ModelForm):
                 attrs={"class": "form-control"},
                 choices=((True, "Active"), (False, "Inactive")),
             ),
+        }
+
+
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = '__all__'
+        widgets = {
+            "name": forms.Select(
+                attrs={"class": "form-control", "placeholder": "Page Name"}
+            ),
+            "url": forms.Select(
+                attrs={"class": "form-control", "placeholder": "Page URL"}
+            ),
+        }
+
+class RoleForm(forms.ModelForm):
+    class Meta:
+        model = Role
+        fields = '__all__'
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Role Name"}
+            ),
+            "role_type": forms.Select(
+                attrs={"class": "form-control"}
+            ),
+            "business_profile": forms.Select(
+                attrs={"class": "form-control"}
+            ),
+            "modules": forms.SelectMultiple(attrs={"class": "form-control h-100"})
+
         }
