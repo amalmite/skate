@@ -7,95 +7,108 @@ from location_field.models.plain import PlainLocationField
 
 # Create your models here.
 
+
 class CompanyGroup(models.Model):
     name = models.CharField(max_length=255)
     mobile_number = models.CharField(max_length=20)
     email = models.EmailField()
     address = models.TextField()
-    logo = models.FileField(upload_to='logo/')
+    logo = models.FileField(upload_to="logo/")
 
     def __str__(self):
         return f"Group dashboard{self.name}"
+
 
 class Location(models.Model):
     name = models.CharField(max_length=255)
     emirates = models.CharField(max_length=255)
     country = models.CharField(max_length=100)
-    google_map = PlainLocationField(based_fields=['city'], zoom=7)
+    google_map = PlainLocationField(based_fields=["city"], zoom=7)
 
     def __str__(self):
         return f"Location {self.name} country {self.country}"
 
+
 class Mall(models.Model):
     name = models.CharField(max_length=255)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name="Mall Location", null=True)
-    image = models.FileField(upload_to='mall/')
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, verbose_name="Mall Location", null=True
+    )
+    image = models.FileField(upload_to="mall/")
 
     def __str__(self):
         return f"Mall details {self.name}"
+
 
 class Tax(models.Model):
     full_name = models.CharField(max_length=255)
     short_name = models.CharField(max_length=255)
     tax_percentage_checkbox = models.BooleanField(default=True)
-    tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    fixed_price_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tax_percentage = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    fixed_price_tax_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     status = models.BooleanField(default=True)
-
 
     def __str__(self):
         return f"Tax {self.full_name}"
-    
+
+
 class PaymentMode(models.Model):
 
     STATUS_CHOICES = [
-        ('Active', 'Active'),
-        ('Disabled', 'Disabled'),
+        ("Active", "Active"),
+        ("Disabled", "Disabled"),
     ]
 
     name = models.CharField(max_length=100)
     wallet_id = models.CharField(max_length=100)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Active')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Active")
 
     def __str__(self):
         return self.name
-    
 
 
 class BusinessProfile(models.Model):
     name = models.CharField(max_length=64, blank=False, default=None, null=True)
-    mall = models.ForeignKey(Mall,on_delete=models.CASCADE)
-    company_group = models.ForeignKey(CompanyGroup,on_delete=models.CASCADE)
+    mall = models.ForeignKey(Mall, on_delete=models.CASCADE)
+    company_group = models.ForeignKey(CompanyGroup, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=25)
     email = models.EmailField()
     currency = models.CharField(max_length=25)
-    select_tax = models.ManyToManyField(Tax,default=None)
+    select_tax = models.ManyToManyField(Tax, default=None)
     trn_no = models.CharField(max_length=20)
     tax_reporting_dates = models.CharField(max_length=100)
     license_no = models.CharField(max_length=50)
     expiry = models.DateField()
     operational_hours_start = models.TimeField()
     operational_hours_end = models.TimeField()
-    report_generation_start_time = models.TimeField(default='07:00')
-    report_generation_end_time = models.TimeField(default='06:59')
+    report_generation_start_time = models.TimeField(default="07:00")
+    report_generation_end_time = models.TimeField(default="06:59")
     invoice_heading = models.CharField(max_length=255)
     address = models.TextField()
-    logo = models.ImageField(upload_to='logo/')
+    logo = models.ImageField(upload_to="logo/")
     status = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Business profile{self.name} {self.mall}"
-    
+
 
 class Module(models.Model):
     URL_CHOICES = [
-        ('/product/product/', 'product'),
+        ("/product/product/", "product"),
     ]
     URL_NAMES = [
-        ('product Report', '/product/product-report/'),
+        ("product Report", "/product/product-report/"),
     ]
-    url = models.CharField(max_length=150, choices=URL_CHOICES, null=True, verbose_name='Page Name')
-    name = models.CharField(max_length=50, choices=URL_NAMES, null=True, verbose_name='Page URL')
+    url = models.CharField(
+        max_length=150, choices=URL_CHOICES, null=True, verbose_name="Page Name"
+    )
+    name = models.CharField(
+        max_length=50, choices=URL_NAMES, null=True, verbose_name="Page URL"
+    )
     created_on = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
@@ -104,15 +117,17 @@ class Module(models.Model):
 
 class Role(models.Model):
     ROLE_TYPE_CHOICES = (
-        ('Employee', 'Employee'),
-        ('Business', 'Business'),
-        ('Group', 'Group'),
-        ('Django Admin', 'Django Admin'),
+        ("Employee", "Employee"),
+        ("Business", "Business"),
+        ("Group", "Group"),
+        ("Django Admin", "Django Admin"),
     )
 
     name = models.CharField(max_length=100)
     modules = models.ManyToManyField(Module, default=None)
-    business_profile = models.ForeignKey(BusinessProfile, on_delete=models.CASCADE, default=None, null=True)
+    business_profile = models.ForeignKey(
+        BusinessProfile, on_delete=models.CASCADE, default=None, null=True
+    )
     role_type = models.CharField(max_length=20, choices=ROLE_TYPE_CHOICES)
 
     def __str__(self):
@@ -168,24 +183,23 @@ class AccountActivation(models.Model):
 class Employee(models.Model):
 
     NATIONALITY_CHOICES = [
-        ('UAE', 'United Arab Emirates'),
-        ('US', 'United States'),
-        ('UK', 'United Kingdom'),
-        ('CA', 'Canada'),
-        ('IN', 'India'),
-
+        ("UAE", "United Arab Emirates"),
+        ("US", "United States"),
+        ("UK", "United Kingdom"),
+        ("CA", "Canada"),
+        ("IN", "India"),
     ]
 
     GENDER_CHOICES = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('O', 'Other'),
+        ("M", "Male"),
+        ("F", "Female"),
+        ("O", "Other"),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     employee_id = models.CharField(max_length=100, unique=True)
-    nationality = models.CharField(max_length=100,choices=NATIONALITY_CHOICES)
-    gender = models.CharField(max_length=10,choices=GENDER_CHOICES)
+    nationality = models.CharField(max_length=100, choices=NATIONALITY_CHOICES)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     business_profile = models.ForeignKey(
         BusinessProfile, on_delete=models.CASCADE, default=None, null=True
     )
@@ -196,26 +210,29 @@ class Employee(models.Model):
     id_expiration_date = models.DateField()
     basic_pay = models.DecimalField(max_digits=10, decimal_places=2)
     house_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    transportation_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    commission_percentage = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transportation_allowance = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
+    commission_percentage = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
     joining_date = models.DateField()
 
     def __str__(self):
         return f"Employee: {self.user.username}, Job Role: {self.job_role}"
 
 
-
 # class Product(models.Model):
 #     name = models.CharField(max_length=255)
 #     code = models.CharField(max_length=255)
-#     price = models.DecimalField(max_digits=10, decimal_places=2) 
+#     price = models.DecimalField(max_digits=10, decimal_places=2)
 #     stock = models.IntegerField()
-#     picture = models.ImageField(upload_to='products/')  
+#     picture = models.ImageField(upload_to='products/')
 #     tax = models.DecimalField(max_digits=5, decimal_places=2)
 
 #     def __str__(self):
 #         return self.name
-    
+
 
 # class AdmissionCategory(models.Model):
 
@@ -264,7 +281,6 @@ class Employee(models.Model):
 #         return f"{self.from_date} to {self.to_date}"
 
 
-
 # class SkateBooking(models.Model):
 
 #     PENDING = 'Pending'
@@ -298,10 +314,14 @@ class Transaction(models.Model):
     transaction_date = models.DateField()
     due_date = models.DateField()
     total = models.DecimalField(max_digits=20, decimal_places=2)
-    status = models.CharField(max_length=20, choices=[("Paid", "Paid"), ("Due", "Due"), ("Canceled", "Canceled")])
+    status = models.CharField(
+        max_length=20,
+        choices=[("Paid", "Paid"), ("Due", "Due"), ("Canceled", "Canceled")],
+    )
 
     def __str__(self):
         return self.customer
+
 
 # class Session(models.Model):
 #     SESSION_TYPES = (
@@ -319,22 +339,22 @@ class Transaction(models.Model):
 #     month = models.PositiveSmallIntegerField(null=True, blank=True)
 #     day = models.PositiveSmallIntegerField(null=True, blank=True)
 #     membership_total_sessions = models.PositiveIntegerField(null=True, blank=True)
-#     # or 
+#     # or
+
 
 class Session(models.Model):
     SESSION_TYPES = (
-        ('hour', 'Hourly'),
-        ('month', 'Monthly'),
+        ("hour", "Hourly"),
+        ("month", "Monthly"),
     )
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=20, decimal_places=2)
-    vat = models.DecimalField(max_digits=5,decimal_places=2)
+    vat = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField()
-    image1 = models.FileField(upload_to='session/')
-    image2 = models.FileField(upload_to='session/',null=True,blank=True)
+    image1 = models.FileField(upload_to="session/")
+    image2 = models.FileField(upload_to="session/", null=True, blank=True)
     session_type = models.CharField(max_length=10, choices=SESSION_TYPES)
     status = models.BooleanField(default=True)
-    
 
     def __str__(self):
         return f"Session - {self.name} {self.session_type}"
@@ -344,17 +364,17 @@ class Session(models.Model):
         verbose_name_plural = "Sessions"
 
 
-
 class HourlySession(models.Model):
-    session = models.OneToOneField(Session,on_delete=models.CASCADE)
+    session = models.OneToOneField(Session, on_delete=models.CASCADE)
     hour = models.PositiveSmallIntegerField(null=True, blank=True)
     minute = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.session.name} {self.hour}"
 
+
 class MembershipSession(models.Model):
-    session = models.OneToOneField(Session,on_delete=models.CASCADE)
+    session = models.OneToOneField(Session, on_delete=models.CASCADE)
     month = models.PositiveSmallIntegerField(null=True, blank=True)
     day = models.PositiveSmallIntegerField(null=True, blank=True)
     total_sessions = models.PositiveIntegerField(null=True, blank=True)
@@ -363,14 +383,12 @@ class MembershipSession(models.Model):
         return f"{self.session.name} {self.month}"
 
 
-
-
 class Product(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2) 
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()
-    image = models.ImageField(upload_to='products/')  
+    image = models.ImageField(upload_to="products/")
     vat = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField()
     is_sale = models.BooleanField(default=False)
@@ -384,17 +402,19 @@ class HomeAdvertisement(models.Model):
     end_date = models.DateField()
     is_session = models.BooleanField(default=False)
     is_url = models.BooleanField(default=False)
-    session = models.ForeignKey(Session,on_delete=models.CASCADE ,null=True,blank=True)
-    url = models.URLField(null=True,blank=True)
+    session = models.ForeignKey(
+        Session, on_delete=models.CASCADE, null=True, blank=True
+    )
+    url = models.URLField(null=True, blank=True)
     button_name = models.CharField(max_length=200)
-    image = models.FileField(upload_to='banner/',null=True,blank=True)
+    image = models.FileField(upload_to="banner/", null=True, blank=True)
     banner_text1 = models.CharField(max_length=200)
     banner_text2 = models.CharField(max_length=200)
     banner_text3 = models.CharField(max_length=200)
 
 
 class SessionDate(models.Model):
-    session = models.ForeignKey(Session,on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     monday = models.BooleanField(default=False)
@@ -407,4 +427,4 @@ class SessionSchedule(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    total_admissions =models.PositiveBigIntegerField()
+    total_admissions = models.PositiveBigIntegerField()

@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render, HttpResponse
 from rest_framework.views import APIView
 from rest_framework import generics
 
@@ -13,15 +13,13 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from random import randint
-from rest_framework import viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from icerink.settings import ALLOWED_HOSTS
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib.auth.decorators import login_required
 
-from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth import authenticate, login, logout
 
 from django.shortcuts import redirect
 
@@ -35,9 +33,7 @@ from web_project import TemplateLayout
 from web_project.template_helpers.theme import TemplateHelper
 
 from django.shortcuts import render, redirect, get_object_or_404
-import logging
 
-logger = logging.getLogger(__name__)
 
 class AdminLoginView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -50,7 +46,7 @@ class AdminLoginView(TemplateView):
         )
 
         return context
-    
+
     def post(self, request):
         username = request.POST.get("email-username")
         password = request.POST.get("password")
@@ -62,19 +58,14 @@ class AdminLoginView(TemplateView):
         if user is None:
             messages.error(request, "Invalid username or password.")
             return redirect("admin_login")
-        print(user,'usert')
-
-        authenticated_user = authenticate(request, username=user.username)
-        print(authenticated_user)
+        authenticated_user = authenticate(request, email=user.email, password=password)
         if authenticated_user is not None:
             login(request, authenticated_user)
             return redirect("admin_home")
         else:
             messages.error(request, "Invalid username or password")
-            logger.error("Authentication failed for user: %s", username)  
-
             return redirect("admin_login")
-        
+
     def get_user(self, username):
         if "@" in username:
             user = User.objects.filter(email=username).first()
@@ -85,10 +76,8 @@ class AdminLoginView(TemplateView):
 
 def admin_logout(request):
     logout(request)
-    messages.success(request, 'Logout Successfully')
-    return redirect('admin_login')
-
-
+    messages.success(request, "Logout Successfully")
+    return redirect("admin_login")
 
 
 class SessionCreateView(TemplateView):
@@ -98,9 +87,9 @@ class SessionCreateView(TemplateView):
         session_form = SessionForm()
         hourly_session_form = HourlySessionForm()
         membership_session_form = MembershipSessionForm()
-        context['session_form'] = session_form
-        context['hourly_session_form'] = hourly_session_form
-        context['membership_session_form'] = membership_session_form
+        context["session_form"] = session_form
+        context["hourly_session_form"] = hourly_session_form
+        context["membership_session_form"] = membership_session_form
         return context
 
     def post(self, request, *args, **kwargs):
@@ -110,105 +99,111 @@ class SessionCreateView(TemplateView):
 
         if session_form.is_valid():
             session = session_form.save(commit=False)
-            session_type = session_form.cleaned_data['session_type']
-            session.save()  
+            session_type = session_form.cleaned_data["session_type"]
+            session.save()
 
-            if session_type == 'hour':
+            if session_type == "hour":
                 if hourly_session_form.is_valid():
                     hour_session = hourly_session_form.save(commit=False)
                     hour_session.session = session
                     hour_session.save()
-                    messages.success(request, 'Hourly session added successfully.')
-                    return redirect('session_list')
-            elif session_type == 'month':
+                    messages.success(request, "Hourly session added successfully.")
+                    return redirect("session_list")
+            elif session_type == "month":
                 if membership_session_form.is_valid():
                     membership_session = membership_session_form.save(commit=False)
                     membership_session.session = session
                     membership_session.save()
-                    messages.success(request, 'Membsership session added successfully.')
-                    return redirect('session_list')
+                    messages.success(request, "Membsership session added successfully.")
+                    return redirect("session_list")
             else:
-                messages.error(request, 'Session creation failed.Enter valid data')
-                return redirect('session_create')
+                messages.error(request, "Session creation failed.Enter valid data")
+                return redirect("session_create")
         else:
-            messages.error(request, 'Session creation failed.Enter valid data')
-            return redirect('session_create')  
-          
-    
+            messages.error(request, "Session creation failed.Enter valid data")
+            return redirect("session_create")
+
 
 class SessionListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         sessions = self.get_total_sessions()
-        context.update({
-            "sessions": sessions,
-            "session_count": sessions.count(),
-            "membership_session_count": self.get_total_membership_sessions(),
-            "hour_session_count": self.get_total_hourly_sessions(),
-            "canceled_session_count": self.get_total_canceled(),
-        })
-        print('status',sessions.values_list('status'))
+        context.update(
+            {
+                "sessions": sessions,
+                "session_count": sessions.count(),
+                "membership_session_count": self.get_total_membership_sessions(),
+                "hour_session_count": self.get_total_hourly_sessions(),
+                "canceled_session_count": self.get_total_canceled(),
+            }
+        )
+        print("status", sessions.values_list("status"))
         return context
 
     def get_total_sessions(self):
-        return Session.objects.all().order_by('id')
-    
+        return Session.objects.all().order_by("id")
+
     def get_total_hourly_sessions(self):
-        return Session.objects.filter(session_type='hour').count()
-    
+        return Session.objects.filter(session_type="hour").count()
+
     def get_total_membership_sessions(self):
-        return Session.objects.filter(session_type='month').count()
+        return Session.objects.filter(session_type="month").count()
 
     def get_total_canceled(self):
         return Session.objects.filter(status=False).count()
 
 
-
 class SessionUpdateView(TemplateView):
-    def get_context_data(self,id, **kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         session = get_object_or_404(Session, pk=id)
         session_form = SessionUpdateForm(instance=session)
-        if session.session_type == 'hour':
-            hourly_session_form = HourlySessionForm( instance=session.hourlysession or None)
+        if session.session_type == "hour":
+            hourly_session_form = HourlySessionForm(
+                instance=session.hourlysession or None
+            )
             membership_session_form = MembershipSessionForm()
-        elif session.session_type == 'month':
+        elif session.session_type == "month":
             hourly_session_form = HourlySessionForm()
-            membership_session_form = MembershipSessionForm( instance=session.membershipsession or None)
-        context['session_form'] = session_form
-        context['hourly_session_form'] = hourly_session_form
-        context['membership_session_form'] = membership_session_form
+            membership_session_form = MembershipSessionForm(
+                instance=session.membershipsession or None
+            )
+        context["session_form"] = session_form
+        context["hourly_session_form"] = hourly_session_form
+        context["membership_session_form"] = membership_session_form
         return context
-    
 
-    
-    def post(self, request, id,*args, **kwargs):
+    def post(self, request, id, *args, **kwargs):
         session = get_object_or_404(Session, pk=id)
         session_form = SessionUpdateForm(request.POST, request.FILES, instance=session)
-        if session.session_type == 'hour':
-            hourly_session_form = HourlySessionForm(request.POST, instance=session.hourlysession or None)
+        if session.session_type == "hour":
+            hourly_session_form = HourlySessionForm(
+                request.POST, instance=session.hourlysession or None
+            )
             membership_session_form = MembershipSessionForm()
-        elif session.session_type == 'month':
+        elif session.session_type == "month":
             hourly_session_form = HourlySessionForm()
-            membership_session_form = MembershipSessionForm(request.POST, instance=session.membershipsession or None)
+            membership_session_form = MembershipSessionForm(
+                request.POST, instance=session.membershipsession or None
+            )
 
         if session_form.is_valid():
             session = session_form.save(commit=False)
             session.save()
-            if session.session_type == 'hour':
+            if session.session_type == "hour":
                 if hourly_session_form.is_valid():
                     hourly_session = hourly_session_form.save(commit=False)
                     hourly_session.save()
-            elif session.session_type == 'month':
+            elif session.session_type == "month":
                 if membership_session_form.is_valid():
                     membership_session = membership_session_form.save(commit=False)
                     membership_session.save()
-            messages.success(request, 'Session updated successfully.')
-            return redirect('session_list')  
+            messages.success(request, "Session updated successfully.")
+            return redirect("session_list")
         else:
-            messages.error(request, 'Session updated failed . Enter valid data')
-            return redirect('session_update',id=id)  
+            messages.error(request, "Session updated failed . Enter valid data")
+            return redirect("session_update", id=id)
 
 
 class ProductCreateView(TemplateView):
@@ -216,420 +211,420 @@ class ProductCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         product_form = ProductForm()
-        context['product_form'] = product_form
+        context["product_form"] = product_form
         return context
 
     def post(self, request, *args, **kwargs):
         product_form = ProductForm(request.POST, request.FILES)
         if product_form.is_valid():
             product_form.save()
-            messages.success(request, 'Product added successfully.')
+            messages.success(request, "Product added successfully.")
 
-            return redirect('product_list')
+            return redirect("product_list")
         else:
-            messages.error(request, 'Failed to add product. Please enter valid data.')
-            return redirect('product_create')
+            messages.error(request, "Failed to add product. Please enter valid data.")
+            return redirect("product_create")
+
 
 class ProductListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         products = self.get_total_products()
-        context.update({
-            "products": products,
-            "product_count": products.count(),
-            "available_products": self.get_total_available_products(),
-            "canceled_products": self.get_total_canceled(),
-            "rental_products": self.get_total_rent(),
-
-        })
+        context.update(
+            {
+                "products": products,
+                "product_count": products.count(),
+                "available_products": self.get_total_available_products(),
+                "canceled_products": self.get_total_canceled(),
+                "rental_products": self.get_total_rent(),
+            }
+        )
         return context
 
     def get_total_products(self):
-        return Product.objects.all().order_by('id')
-    
+        return Product.objects.all().order_by("id")
+
     def get_total_available_products(self):
         return Product.objects.filter(status=True).count()
-    
+
     def get_total_canceled(self):
         return Product.objects.filter(status=False).count()
-    
+
     def get_total_rent(self):
         return Product.objects.filter(is_rent=True).count()
 
 
 class ProductUpdateView(TemplateView):
 
-    def get_context_data(self, id,**kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        product = get_object_or_404(Product,id=id)
+        product = get_object_or_404(Product, id=id)
         product_form = ProductUpdateForm(instance=product)
-        context['product_form'] = product_form
+        context["product_form"] = product_form
         return context
 
-    def post(self, request,id, *args, **kwargs):
-        product = get_object_or_404(Product,id=id)
+    def post(self, request, id, *args, **kwargs):
+        product = get_object_or_404(Product, id=id)
 
-        product_form = ProductUpdateForm(request.POST, request.FILES,instance=product)
+        product_form = ProductUpdateForm(request.POST, request.FILES, instance=product)
         if product_form.is_valid():
             product_form.save()
-            messages.success(request, 'Product updated successfully.')
+            messages.success(request, "Product updated successfully.")
 
-            return redirect('product_list')
+            return redirect("product_list")
         else:
-            messages.error(request, 'Failed to update product. Please enter valid data.')
-            return redirect('product_update',id=id)
-
+            messages.error(
+                request, "Failed to update product. Please enter valid data."
+            )
+            return redirect("product_update", id=id)
 
 
 class AdminDashboard(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
-    
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('admin_login')  
+            return redirect("admin_login")
         return super().dispatch(request, *args, **kwargs)
 
-    
+
 class AdminProfileView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        context.update({
-            "get_profile": self.get_profile_data(),
-            "get_company": self.get_company(),
-
-
-        })
+        context.update(
+            {
+                "get_profile": self.get_profile_data(),
+                "get_company": self.get_company(),
+            }
+        )
         return context
 
     def get_profile_data(self):
         return User.objects.filter(id=self.request.user.id).first()
-    
+
     def get_company(self):
         return CompanyGroup.objects.all()
-    
+
 
 class AdminProfileUpdateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         user = get_object_or_404(User, pk=self.request.user.id)
         admin_form = AdminProfileForm(instance=user)
-        context['admin_form'] = admin_form
+        context["admin_form"] = admin_form
         return context
-    
+
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=self.request.user.id)
         admin_form = AdminProfileForm(request.POST, instance=user)
         if admin_form.is_valid():
             user = admin_form.save(commit=False)
             user.save()
-            messages.success(request, 'Profile updated successfully.')
-            return redirect('admin_profile')  
+            messages.success(request, "Profile updated successfully.")
+            return redirect("admin_profile")
         else:
             for field, errors in admin_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('admin_update')
+            return redirect("admin_update")
 
 
 class CompanyGroupCreationView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         company_form = CompanyGroupForm()
-        context['company_form'] = company_form
+        context["company_form"] = company_form
         return context
 
     def post(self, request, *args, **kwargs):
         company_form = CompanyGroupForm(request.POST, request.FILES)
         if company_form.is_valid():
-            company =company_form.save()
-            messages.success(request, 'Company added successfully.')
-            return redirect('company_detail', id=company.id)
+            company = company_form.save()
+            messages.success(request, "Company added successfully.")
+            return redirect("company_detail", id=company.id)
         else:
-            messages.error(request, 'Failed to add product. Please enter valid data.')
-            return redirect('company_create')
-        
-class CompanyGroupUpdateView(TemplateView):
-    def get_context_data(self,id, **kwargs):
-        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        company = get_object_or_404(CompanyGroup,pk=id)
-        company_form = CompanyGroupForm(instance=company)
-        context['company_form'] = company_form
-        return context
-    
-    def post(self, request,id, *args, **kwargs):
-        company = get_object_or_404(CompanyGroup,id=id)
+            messages.error(request, "Failed to add product. Please enter valid data.")
+            return redirect("company_create")
 
-        company_form = CompanyGroupForm(request.POST, request.FILES,instance=company)
+
+class CompanyGroupUpdateView(TemplateView):
+    def get_context_data(self, id, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        company = get_object_or_404(CompanyGroup, pk=id)
+        company_form = CompanyGroupForm(instance=company)
+        context["company_form"] = company_form
+        return context
+
+    def post(self, request, id, *args, **kwargs):
+        company = get_object_or_404(CompanyGroup, id=id)
+
+        company_form = CompanyGroupForm(request.POST, request.FILES, instance=company)
         if company_form.is_valid():
             company = company_form.save()
-            messages.success(request, 'Company updated successfully.')
-            return redirect('company_detail',id=company.id)
+            messages.success(request, "Company updated successfully.")
+            return redirect("company_detail", id=company.id)
         else:
-            messages.error(request, 'Failed to update product. Please enter valid data.')
-            return redirect('company_update',id=id)
-        
-
-
+            messages.error(
+                request, "Failed to update product. Please enter valid data."
+            )
+            return redirect("company_update", id=id)
 
 
 class CompanyDetailView(TemplateView):
-    def get_context_data(self,id, **kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        company = get_object_or_404(CompanyGroup,id=id)
-        context ['company'] = company
+        company = get_object_or_404(CompanyGroup, id=id)
+        context["company"] = company
         return context
-    
 
 
 class TaxCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         tax_form = TaxForm()
-        context ['tax_form'] = tax_form
+        context["tax_form"] = tax_form
         return context
-    
+
     def post(self, request, *args, **kwargs):
         tax_form = TaxForm(request.POST)
         if tax_form.is_valid():
             tax_form.save()
-            messages.success(request, 'Tax added successfully.')
-            return redirect('tax_list')
+            messages.success(request, "Tax added successfully.")
+            return redirect("tax_list")
         else:
             for field, errors in tax_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('tax_create')
-        
+            return redirect("tax_create")
+
+
 class TaxListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         tax = self.get_total_tax()
-        context.update({
-            "tax": tax
-        })
+        context.update({"tax": tax})
         return context
 
     def get_total_tax(self):
-        return Tax.objects.all().order_by('id')
-
+        return Tax.objects.all().order_by("id")
 
 
 class TaxUpdateView(TemplateView):
-    def get_context_data(self, id,**kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         tax = get_object_or_404(Tax, pk=id)
         tax_form = TaxForm(instance=tax)
-        context['tax_form'] = tax_form
+        context["tax_form"] = tax_form
         return context
-    
-    def post(self, request,id, *args, **kwargs):
+
+    def post(self, request, id, *args, **kwargs):
         tax = get_object_or_404(Tax, pk=id)
-        tax_form = TaxForm(request.POST,instance=tax)
+        tax_form = TaxForm(request.POST, instance=tax)
         if tax_form.is_valid():
             tax = tax_form.save(commit=False)
             tax.save()
-            messages.success(request, 'Profile updated successfully.')
-            return redirect('tax_list')  
+            messages.success(request, "Profile updated successfully.")
+            return redirect("tax_list")
         else:
             for field, errors in tax_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('tax_update')
-
+            return redirect("tax_update")
 
 
 class LocationcreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         location_form = LocationForm()
-        context['location_form'] = location_form
+        context["location_form"] = location_form
         return context
-    
+
     def post(self, request, *args, **kwargs):
         location_form = LocationForm(request.POST)
         if location_form.is_valid():
             location_form.save()
-            messages.success(request, 'Mall added successfully.')
-            return redirect('location_list')
+            messages.success(request, "Mall added successfully.")
+            return redirect("location_list")
         else:
             for field, errors in location_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('mall_create')
-        
+            return redirect("mall_create")
+
+
 class LocationListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         location = self.get_location()
-        context.update({
-            "locations": location
-        })
+        context.update({"locations": location})
         return context
 
     def get_location(self):
-        return Location.objects.all().order_by('id')
-    
+        return Location.objects.all().order_by("id")
+
+
 class LocationUpdateView(TemplateView):
-    def get_context_data(self, id,**kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         location = get_object_or_404(Location, pk=id)
         location_form = LocationForm(instance=location)
-        context['location_form'] = location_form
+        context["location_form"] = location_form
         return context
-    
-    def post(self, request,id, *args, **kwargs):
+
+    def post(self, request, id, *args, **kwargs):
         location = get_object_or_404(Location, pk=id)
-        location_form = LocationForm(request.POST,instance=location)
+        location_form = LocationForm(request.POST, instance=location)
         if location_form.is_valid():
             location = location_form.save(commit=False)
             location.save()
-            messages.success(request, 'Location updated successfully.')
-            return redirect('location_list')  
+            messages.success(request, "Location updated successfully.")
+            return redirect("location_list")
         else:
             for field, errors in location_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('location_update',id=id)
-        
+            return redirect("location_update", id=id)
+
 
 class MallcreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         mall_form = MallForm()
-        context['mall_form'] = mall_form
+        context["mall_form"] = mall_form
         return context
-    
+
     def post(self, request, *args, **kwargs):
-        mall_form = MallForm(request.POST,request.FILES)
+        mall_form = MallForm(request.POST, request.FILES)
         if mall_form.is_valid():
             mall_form.save()
-            messages.success(request, 'Mall added successfully.')
-            return redirect('mall_list')
+            messages.success(request, "Mall added successfully.")
+            return redirect("mall_list")
         else:
             for field, errors in mall_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('mall_create')
-        
+            return redirect("mall_create")
+
 
 class MallListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        context.update({
-            "malls": self.get_mall(),
-        })
+        context.update(
+            {
+                "malls": self.get_mall(),
+            }
+        )
         return context
 
     def get_mall(self):
         return Mall.objects.all()
-    
+
 
 class MallUpdateView(TemplateView):
-    def get_context_data(self, id,**kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         mall = get_object_or_404(Mall, pk=id)
         mall_form = MallForm(instance=mall)
-        context['mall_form'] = mall_form
+        context["mall_form"] = mall_form
         return context
-    
-    def post(self, request,id, *args, **kwargs):
+
+    def post(self, request, id, *args, **kwargs):
         mall = get_object_or_404(Mall, pk=id)
-        mall_form = MallForm(request.POST,request.FILES,instance=mall)
+        mall_form = MallForm(request.POST, request.FILES, instance=mall)
         if mall_form.is_valid():
             location = mall_form.save(commit=False)
             location.save()
-            messages.success(request, 'Mall updated successfully.')
-            return redirect('mall_list')  
+            messages.success(request, "Mall updated successfully.")
+            return redirect("mall_list")
         else:
             for field, errors in mall_form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('mall_update',id=id)
-        
+            return redirect("mall_update", id=id)
+
 
 class BusinessProfileCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         form = BusinessProfileForm()
-        context['form'] = form
+        context["form"] = form
         return context
-        
+
     def post(self, request, *args, **kwargs):
-        form = BusinessProfileForm(request.POST,request.FILES)
+        form = BusinessProfileForm(request.POST, request.FILES)
         if form.is_valid():
             business = form.save(commit=False)
             business.save()
-            messages.success(request, 'Business added successfully.')
-            return redirect('business_profile_list')  
+            messages.success(request, "Business added successfully.")
+            return redirect("business_profile_list")
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('business_profile_create')
-        
+            return redirect("business_profile_create")
+
+
 class BusinessProfileListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        context.update({
-            "business_profiles": self.get_business_profiles(),
-        })
+        context.update(
+            {
+                "business_profiles": self.get_business_profiles(),
+            }
+        )
         return context
 
     def get_business_profiles(self):
         return BusinessProfile.objects.all()
-    
+
 
 class BusinessProfileUpdateView(TemplateView):
-    def get_context_data(self,id, **kwargs):
+    def get_context_data(self, id, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        business = get_object_or_404(BusinessProfile,id=id)
+        business = get_object_or_404(BusinessProfile, id=id)
         form = BusinessProfileForm(instance=business)
-        context['form'] = form
+        context["form"] = form
         return context
-        
-    def post(self, request,id, *args, **kwargs):
-        business = get_object_or_404(BusinessProfile,id=id)
-        form = BusinessProfileForm(request.POST,request.FILES,instance=business)
+
+    def post(self, request, id, *args, **kwargs):
+        business = get_object_or_404(BusinessProfile, id=id)
+        form = BusinessProfileForm(request.POST, request.FILES, instance=business)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Business updates successfully.')
-            return redirect('business_profile_list')  
+            messages.success(request, "Business updates successfully.")
+            return redirect("business_profile_list")
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Error in {field}: {error}")
-            return redirect('business_profile_update',id=id)
+            return redirect("business_profile_update", id=id)
 
 
 class tryview(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
-    
+
+
 class HeaderForm(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
-    
-    
-class SessionSchedule( TemplateView):
+
+
+class SessionSchedule(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
-    
-
-
-
-
 
 
 class TransactionAddView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        context['current_date'] = date.today().strftime("%Y-%m-%d")
+        context["current_date"] = date.today().strftime("%Y-%m-%d")
         return context
 
     def post(self, request):
@@ -637,34 +632,29 @@ class TransactionAddView(TemplateView):
         if form.is_valid():
             if not self.transaction_exists(form.cleaned_data):
                 form.save()
-                messages.success(request, 'Transaction Added')
+                messages.success(request, "Transaction Added")
             else:
-                messages.error(request, 'Transaction already exists')
+                messages.error(request, "Transaction already exists")
         else:
-            messages.error(request, 'Transaction Failed')
-        return redirect('index')
+            messages.error(request, "Transaction Failed")
+        return redirect("index")
 
     def transaction_exists(self, cleaned_data):
         return Transaction.objects.filter(
-            customer__iexact=cleaned_data['customer'],
-            transaction_date=cleaned_data['transaction_date'],
-            due_date=cleaned_data['due_date'],
-            total=cleaned_data['total'],
-            status=cleaned_data['status']
+            customer__iexact=cleaned_data["customer"],
+            transaction_date=cleaned_data["transaction_date"],
+            due_date=cleaned_data["due_date"],
+            total=cleaned_data["total"],
+            status=cleaned_data["status"],
         ).exists()
 
+
 def index(request):
-    return HttpResponse('hello')
+    return HttpResponse("hello")
+
 
 def dashboard_crm(request):
-    return HttpResponse('hello')
-
-
-
-
-
-
-
+    return HttpResponse("hello")
 
 
 # def SessionDelete(request,id):
@@ -672,12 +662,6 @@ def dashboard_crm(request):
 #     session.delete()
 #     messages.success(request, 'Session Deleted')
 #     return redirect('list_session')
-
-
-
-
-
-
 
 
 # def create_session(request):
@@ -699,7 +683,7 @@ def dashboard_crm(request):
 #                     membership_session = membership_session_form.save(commit=False)
 #                     membership_session.session = session
 #                     membership_session.save()
-#             return redirect('/') 
+#             return redirect('/')
 #     else:
 #         session_form = SessionCreateForm()
 #         hourly_session_form = HourlySessionForm()
@@ -707,8 +691,8 @@ def dashboard_crm(request):
 #     return render(request, 'session.html', {'session_form': session_form, 'hourly_session_form': hourly_session_form, 'membership_session_form': membership_session_form})
 
 
-
 # Employee & Use API
+
 
 class UserRegisterView(APIView):
 
@@ -722,7 +706,7 @@ class UserRegisterView(APIView):
             user.save()
             email_code = AccountActivation(user=user)
             activation_code = email_code.create_confirmation()
-            print(activation_code,'code')
+            print(activation_code, "code")
             try:
                 subject = "Registration OTP"
                 message = f"Your OTP for registration is: {activation_code}"
@@ -787,10 +771,9 @@ class Login(APIView):
 
 
 class UserDetailAPIView(APIView):
-    
+
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
-
 
     def get(self, request, *args, **kwargs):
         try:
@@ -855,13 +838,13 @@ class ForgotPasswordView(APIView):
             except User.DoesNotExist:
                 return Response(
                     {"error": "User with this email does not exist"},
-                    status=status.HTTP_404_NOT_FOUND, 
+                    status=status.HTTP_404_NOT_FOUND,
                 )
 
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
 
-            reset_link = f"http://localhost:3000/reset-password/{uidb64}/{token}/" 
+            reset_link = f"http://localhost:3000/reset-password/{uidb64}/{token}/"
             subject = "Forgot Password"
             message = f"Click the link to reset your password: {reset_link}"
             to_email = user.email
@@ -886,7 +869,6 @@ class ForgotPasswordView(APIView):
 class ResetPasswordView(APIView):
     serializer_class = PasswordResetSerializer
 
-     
     def post(self, request, uidb64, token, *args, **kwargs):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -944,7 +926,7 @@ class ChangeEmailView(APIView):
 
 class ChangeEmailVerifyView(APIView):
 
-    serializer_class =ChangeEmailVerifySerializer
+    serializer_class = ChangeEmailVerifySerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None):
@@ -974,8 +956,9 @@ class ChangeEmailVerifyView(APIView):
 
 # Employee registeration
 class EmployeeRegistrationAPIView(APIView):
-     
+
     serializer_class = EmployeeRegistrationSerializer
+
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -1016,7 +999,6 @@ class EmployeeProfileAPiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class EmployeeLoginApiView(APIView):
 
     serializer_class = EmployeeLoginSerializer
@@ -1036,20 +1018,21 @@ class EmployeeListView(generics.ListAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
+
 # class SkatingProductViewSet(viewsets.ModelViewSet):
 #     queryset = Product.objects.all()
 #     serializer_class = SkatingProductSerializer
 
 
-
-
 from rest_framework.decorators import api_view
-@api_view(['GET'])
+
+
+@api_view(["GET"])
 def getRoutes(request):
     routes = {
-        "login": request.build_absolute_uri('/api/login/'),
-        "register": request.build_absolute_uri('/api/user/register/'),
-        "profile": request.build_absolute_uri('/api/user/profile/')
+        "login": request.build_absolute_uri("/api/login/"),
+        "register": request.build_absolute_uri("/api/user/register/"),
+        "profile": request.build_absolute_uri("/api/user/profile/"),
     }
     return Response(routes)
 
@@ -1089,7 +1072,7 @@ def getRoutes(request):
 #                 user = authenticate(request, username=username, password=password)
 #                 if user is not None:
 #                     token = custom_token_serializer.get_token(user)
-                    
+
 #                     return Response(
 #                         {
 #                             "mes": "User Log in Successfully",
@@ -1114,7 +1097,7 @@ def getRoutes(request):
 #         data =SessionScheduling.objects.all()
 #         serializers=SessionSchedulingSerializer(data,many=True)
 #         return Response(serializers.data)
-    
+
 #     def post(self, request):
 #         serializer = SessionSchedulingSerializer(data=request.data)
 #         if serializer.is_valid():
@@ -1133,14 +1116,14 @@ def getRoutes(request):
 #                     session = SessionScheduling.objects.create(
 #                         from_date=current_date,
 #                         to_date=current_date,
-#                         start_time=session_start_time.time(),  
-#                         end_time=session_end_time.time(), 
+#                         start_time=session_start_time.time(),
+#                         end_time=session_end_time.time(),
 #                     )
 #                     session.save()
 #                 current_date += delta
 #             return Response(status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 #     def delete(self, request):
 #         SessionScheduling.objects.all().delete()
 #         return Response({"message": "deleted"}, status=status.HTTP_204_NO_CONTENT)

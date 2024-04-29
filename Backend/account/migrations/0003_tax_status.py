@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0002_alter_tax_tax_percentage_checkbox'),
+        ("account", "0002_alter_tax_tax_percentage_checkbox"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tax',
-            name='status',
+            model_name="tax",
+            name="status",
             field=models.BooleanField(default=True),
         ),
     ]

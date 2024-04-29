@@ -3,18 +3,27 @@ from .models import *
 from django.contrib.auth import authenticate
 
 
-
 class EmployeeDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['job_role', 'employee_id']
+        fields = ["job_role", "employee_id"]
+
 
 class UserDataSerializer(serializers.ModelSerializer):
     employee = EmployeeDataSerializer(required=False)
+
     class Meta:
         model = User
-        fields = ['email','username','first_name','last_name','is_user','is_admin','is_employee','employee']
-
+        fields = [
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "is_user",
+            "is_admin",
+            "is_employee",
+            "employee",
+        ]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -75,7 +84,6 @@ class UserSerializer(serializers.ModelSerializer):
             "phone_number",
             "first_name",
             "last_name",
-       
         )
 
     def update(self, instance, validated_data):
@@ -183,7 +191,6 @@ class EmployeeRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(user_serializer.errors)
 
 
-
 class EmployeeSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -207,13 +214,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
             )
             user_instance.save()
 
-        instance.employee_id = validated_data.get("employee_id", instance.employee_id)  
+        instance.employee_id = validated_data.get("employee_id", instance.employee_id)
         instance.nationality = validated_data.get("nationality", instance.nationality)
         instance.gender = validated_data.get("gender", instance.gender)
         instance.save()
 
         return instance
-
 
 
 class EmployeeLoginSerializer(serializers.Serializer):
@@ -253,7 +259,7 @@ class EmployeeLoginSerializer(serializers.Serializer):
 #         token["first_name"] = user.first_name
 #         token["is_active"] = user.is_active
 #         return token
-    
+
 # class UserLoginSerializer(serializers.Serializer):
 #     email =serializers.CharField(required=False)
 #     username = serializers.CharField(required=False)

@@ -28,7 +28,12 @@ SECRET_KEY = "django-insecure-uop5q1uyr_x9!o-e66v#*%+i_lnmvzzk!1$az(iy*m6m3()e+z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['skateapp.netlify.app','locathost','127.0.0.1','skating-ep21.onrender.com']
+ALLOWED_HOSTS = [
+    "skateapp.netlify.app",
+    "locathost",
+    "127.0.0.1",
+    "skating-ep21.onrender.com",
+]
 
 
 AUTH_USER_MODEL = "account.User"
@@ -48,8 +53,6 @@ INSTALLED_APPS = [
     "account",
     "corsheaders",
     "location_field.apps.DefaultConfig",  # location_field
-
-
 ]
 
 MIDDLEWARE = [
@@ -61,7 +64,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-
 ]
 
 ROOT_URLCONF = "icerink.urls"
@@ -123,7 +125,9 @@ WSGI_APPLICATION = "icerink.wsgi.application"
 # }
 
 DATABASES = {
-    'default': dj_database_url.parse('postgres://skate_mhpr_user:SEV0dITin2ajvvgiLO2tLCGcUvvNd1jZ@dpg-cojoqegcmk4c73c01lvg-a.oregon-postgres.render.com/skate_mhpr')
+    "default": dj_database_url.parse(
+        "postgres://skate_mhpr_user:SEV0dITin2ajvvgiLO2tLCGcUvvNd1jZ@dpg-cojoqegcmk4c73c01lvg-a.oregon-postgres.render.com/skate_mhpr"
+    )
 }
 
 # DATABASES = {
@@ -171,8 +175,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 MEDIA_URL = "/media/"
@@ -211,10 +215,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://skateapp.netlify.app'
-]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "https://skateapp.netlify.app"]
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True

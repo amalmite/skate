@@ -7,14 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0004_rename_picture_mall_image'),
+        ("account", "0004_rename_picture_mall_image"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='businessprofile',
-            name='company_group',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='account.companygroup'),
+            model_name="businessprofile",
+            name="company_group",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="account.companygroup",
+            ),
             preserve_default=False,
         ),
     ]
