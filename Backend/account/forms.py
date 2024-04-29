@@ -198,6 +198,7 @@ class ProductUpdateForm(forms.ModelForm):
                 choices=((True, "Active"), (False, "Inactive")),
                 attrs={"class": "form-control"},
             ),
+            
         }
 
 

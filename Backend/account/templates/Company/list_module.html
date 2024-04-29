@@ -166,7 +166,7 @@ $(function () {
 
                 {
                     text: '<i class="mdi mdi-plus me-0 me-sm-1"></i><span class="d-none d-sm-inline-block">ADD MODULE</span>',
-                    className: 'add-new btn btn-primary ms-n1 waves-effect waves-light' + (AddModule ? '' : ' disabled'),
+                    className: 'add-new btn btn-primary ms-n1 waves-effect waves-light' + (AddModule),
                     action: function (e, dt, button, config) {
                         window.location.href = '/module_create/';
                     }
