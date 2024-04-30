@@ -1,0 +1,12 @@
+<html>
+<body>
+<h1>Hii</h1>
+{% for session in sessions %}
+    <h1>{{ session.id }}</h1>
+    <p>{{ session.start_time }}</p>
+    <p>{{ session.end_time }}</p>
+    <p>{{ session.session_date.start_date }}</p>
+    <p>{{ session.session_date.end_date }}</p>
+{% endfor %}
+</body>
+</html>

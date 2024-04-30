@@ -757,13 +757,45 @@ class HeaderForm(TemplateView):
         return context
 
 
-class SessionSchedule(TemplateView):
+class SessionScheduleView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
+    
+
+from django.shortcuts import render
+from datetime import timedelta
+
+def create_session(request):
+    if request.method == 'POST':
+        session_date_form = SessionDateForm(request.POST)
+        if session_date_form.is_valid():
+            session_date = session_date_form.save()
+            session_schedule_form = SessionScheduleForm() 
+            current_date = session_date.start_date
+            while current_date <= session_date.end_date:
+                session_schedule_form = SessionScheduleForm(request.POST)
+                if session_schedule_form.is_valid():
+                    session_schedule = session_schedule_form.save(commit=False)
+                    session_schedule.session_date = session_date
+                    session_schedule.save()
+                    
+                current_date += timedelta(days=1)
+            return redirect('list_page')
+    else:
+        session_date_form = SessionDateForm()
+        session_schedule_form = SessionScheduleForm()
+
+    return render(request, 'Session/session.html', {
+        'session_date_form': session_date_form,
+        'session_schedule_form': session_schedule_form,
+    })
 
 
-
+def get_session(request):
+    sessions = SessionSchedule.objects.all()
+    context = {'sessions': sessions}  
+    return render(request, 'Session/session_list.html', context=context)
 
 def index(request):
     return HttpResponse("hello")

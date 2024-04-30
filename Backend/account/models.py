@@ -208,10 +208,10 @@ class Employee(models.Model):
     )
     job_role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     passport_no = models.CharField(max_length=20, unique=True)
-    passport_expiration_date = models.DateField()
-    emirates_id = models.CharField(max_length=20, unique=True)
-    id_expiration_date = models.DateField()
-    basic_pay = models.DecimalField(max_digits=10, decimal_places=2)
+    passport_expiration_date = models.DateField(null=True)
+    emirates_id = models.CharField(max_length=20, unique=True,null=True)
+    id_expiration_date = models.DateField(null=True)
+    basic_pay = models.DecimalField(max_digits=10, decimal_places=2,null=True)
     house_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     transportation_allowance = models.DecimalField(
         max_digits=10, decimal_places=2, default=0
@@ -219,7 +219,7 @@ class Employee(models.Model):
     commission_percentage = models.DecimalField(
         max_digits=10, decimal_places=2, default=0
     )
-    joining_date = models.DateField()
+    joining_date = models.DateField(null=True)
 
     def __str__(self):
         return f"Employee: {self.user.username}, Job Role: {self.job_role}"
@@ -422,12 +422,24 @@ class SessionDate(models.Model):
     end_date = models.DateField()
     monday = models.BooleanField(default=False)
     tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+    saturday = models.BooleanField(default=False)
     sunday = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f" Session {self.session.name} {self.start_date} - {self.end_date}"
 
 
 class SessionSchedule(models.Model):
     session_date = models.ForeignKey(SessionDate, on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    total_admissions = models.PositiveBigIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2,blank=True,null=True)
+    total_admissions = models.PositiveBigIntegerField(null=True,blank=True)
+
+    def __str__(self):
+        return f" Session {self.session_date} {self.start_time} - {self.end_time}"
+

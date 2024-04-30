@@ -222,15 +222,27 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return instance
 
 
+
 class EmployeeLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
 
     def validate(self, data):
-        user = authenticate(**data)
-        if user and user.is_active and user.is_employee:
-            return user
+        username = data.get('username')
+        password = data.get('password')
+
+        user = self.get_user(username)
+        if user and authenticate(email=user.email, password=password):
+            if user.is_active and user.is_employee:
+                return user
         raise serializers.ValidationError("Incorrect username or password.")
+
+    def get_user(self, username):
+        if "@" in username:
+            user = User.objects.filter(email=username).first()
+        else:
+            user = User.objects.filter(username=username).first()
+        return user
 
 
 # class SkatingProductSerializer(serializers.ModelSerializer):

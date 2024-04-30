@@ -426,3 +426,20 @@ class RoleForm(forms.ModelForm):
             "modules": forms.SelectMultiple(attrs={"class": "form-control h-100"})
 
         }
+
+class SessionScheduleForm(forms.ModelForm):
+    class Meta:
+        model = SessionSchedule
+        fields = ['start_time','end_time']
+
+
+class SessionDateForm(forms.ModelForm):
+
+    class Meta:
+        model = SessionDate
+        fields = ['session', 'start_date', 'end_date']
+        
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

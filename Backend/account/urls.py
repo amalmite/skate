@@ -9,7 +9,13 @@ router = DefaultRouter()
 
 
 urlpatterns = [
+    path("session/", create_session, name="session"),
+    path("list_page/", get_session, name="list_page"),
+
+
+
     path("", AdminDashboard.as_view(template_name="test.html"), name="admin_home"),
+
     path(
         "admin_login/",
         AdminLoginView.as_view(template_name="Auth/admin_login.html"),
@@ -118,7 +124,7 @@ urlpatterns = [
     ),
     path(
         "sessio_schedule/",
-        SessionSchedule.as_view(template_name="Session/session_schedule.html"),
+        SessionScheduleView.as_view(template_name="Session/session_schedule.html"),
         name="session_schedule",
     ),
     path(
