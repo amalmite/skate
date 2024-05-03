@@ -761,41 +761,97 @@ class SessionScheduleView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
         return context
-    
 
-from django.shortcuts import render
 from datetime import timedelta
 
-def create_session(request):
+def create_outer_repeater(request):
     if request.method == 'POST':
-        session_date_form = SessionDateForm(request.POST)
-        if session_date_form.is_valid():
-            session_date = session_date_form.save()
-            session_schedule_form = SessionScheduleForm() 
-            current_date = session_date.start_date
-            while current_date <= session_date.end_date:
-                session_schedule_form = SessionScheduleForm(request.POST)
-                if session_schedule_form.is_valid():
-                    session_schedule = session_schedule_form.save(commit=False)
-                    session_schedule.session_date = session_date
-                    session_schedule.save()
-                    
+        outer_form = SessionDateForm(request.POST)
+        inner_formset = SessionScheduleFormset(request.POST)
+
+        if outer_form.is_valid() and inner_formset.is_valid():
+            start_date = outer_form.cleaned_data['start_date']
+            end_date = outer_form.cleaned_data['end_date']
+
+            session_date_instance = outer_form.save()
+            current_date = start_date
+            while current_date <= end_date:
+                for form in inner_formset:
+                    start_time = form.cleaned_data.get('start_time')
+                    end_time = form.cleaned_data.get('end_time')
+                    print(start_date,end_time)
+                    session =SessionSchedule.objects.create(session_date = session_date_instance,start_time=start_time,end_time=end_time)
+                    session.save()
                 current_date += timedelta(days=1)
-            return redirect('list_page')
+            return HttpResponse('Data saved successfully.')
     else:
-        session_date_form = SessionDateForm()
-        session_schedule_form = SessionScheduleForm()
-
-    return render(request, 'Session/session.html', {
-        'session_date_form': session_date_form,
-        'session_schedule_form': session_schedule_form,
-    })
+        outer_form = SessionDateForm()
+        inner_formset = SessionScheduleFormset()
+    return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
 
 
-def get_session(request):
-    sessions = SessionSchedule.objects.all()
-    context = {'sessions': sessions}  
-    return render(request, 'Session/session_list.html', context=context)
+
+# def create_session(request):
+#     if request.method == 'POST':
+
+#         session_date_form = SessionDateForm(request.POST)
+#         session_schedule_form = SessionScheduleForm(request.POST)
+
+#         if form.is_valid():
+#             start_time = form.cleaned_data['start_time']
+
+#             end_time = form.cleaned_data['end_time']
+#             session_date = form.save()
+#             current_date = session_date.start_date
+#             while current_date <= session_date.end_date:
+#                 SessionSchedule.objects.create(session_date=session_date,start_time=start_time,end_time=end_time)
+#                 current_date += timedelta(days=1)
+#             return redirect('list_page')
+#     else:
+#         form = SessionDateForm()
+#     return render(request, 'Session/session.html', {'form': form})
+# def create_outer_repeater(request):
+#     if request.method == 'POST':
+#         outer_form = OuterRepeaterForm(request.POST)
+#         inner_formset = InnerRepeaterFormset(request.POST)
+
+#         if outer_form.is_valid() and inner_formset.is_valid():
+#             outer_instance = outer_form.save()
+#             for form in inner_formset:
+#                 if form.is_valid():
+#                     data = form.cleaned_data.get('inner_text_input') 
+#                     print('data',data)
+#                     inner_instance = form.save(commit=False)
+#                     inner_instance.outer_repeater = outer_instance  
+#                     inner_instance.save()
+#             return HttpResponse('Data saved successfully.')
+#     else:
+#         outer_form = OuterRepeaterForm()
+#         inner_formset = InnerRepeaterFormset()
+
+#     return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
+
+
+# def create_outer_repeater(request):
+#     if request.method == 'POST':
+#         outer_form = OuterRepeaterForm(request.POST)
+#         inner_formset = InnerRepeaterFormset(request.POST)
+
+#         if outer_form.is_valid() and inner_formset.is_valid():
+#             outer_instance = outer_form.save()
+#             for form in inner_formset:
+#                 if form.is_valid():
+#                     data = form.cleaned_data.get('inner_text_input') 
+#                     print('data',data)
+#                     inner_instance = form.save(commit=False)
+#                     inner_instance.outer_repeater = outer_instance  
+#                     inner_instance.save()
+#             return HttpResponse('Data saved successfully.')
+#     else:
+#         outer_form = OuterRepeaterForm()
+#         inner_formset = InnerRepeaterFormset()
+
+#     return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
 
 def index(request):
     return HttpResponse("hello")
@@ -803,6 +859,28 @@ def index(request):
 
 def dashboard_crm(request):
     return HttpResponse("hello")
+
+class SessionView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = TemplateLayout.init(self, super().get_context_data(**kwargs))
+        sessions = Session.objects.all()
+        context['sessions'] = sessions
+        return context
+
+
+    def post(self, request):
+        print(request.POST)
+
+        for key, value in request.POST.items():
+            if key.startswith('outer-list'):
+                if 'main-input' in key:
+                    outer_repeater = OuterRepeater.objects.create(text_input=value)
+                    inner_list_prefix = key.replace('main-input', 'inner-list')
+                    inner_list_keys = [k for k in request.POST.keys() if k.startswith(inner_list_prefix)]
+                    for inner_key in inner_list_keys:
+                        InnerRepeater.objects.create(outer_repeater=outer_repeater, inner_text_input=request.POST[inner_key])
+
+        return redirect('test')
 
 
 # def SessionDelete(request,id):

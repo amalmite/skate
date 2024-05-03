@@ -1,42 +1,47 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add bird</title>
+</head>
 <body>
-<form method="post" id="session-form">
-    {% csrf_token %}
-{{form.as_p}}    
-    <!-- Time slots container -->
-    <div id="time-slots">
-        <!-- Initial time slot fields -->
-        <div class="time-slot">
-            <input type="time" name="start_time">
-            <input type="time" name="end_time">
-            <!-- Other fields for this time slot -->
-        </div>
-    </div>
-    
-    <!-- Plus button to add more time slots -->
-    <button type="button" id="add-time-slot">+</button>
-    
-    <!-- Submit button -->
-    <button type="submit">Submit</button>
+<form method="post" id="outer-form">
+{% csrf_token %}
+{{ outer_form.as_p }}
+
+<h3>Inner Repeaters</h3>
+<div id="inner-formsets">
+{{ inner_formset.management_form }}
+<div class="inner-formset">
+    {% for form in inner_formset %}
+        {{ form.as_p }}
+    {% endfor %}
+</div>
+</div>
+
+<button type="submit">Submit</button>
+<button type="button" id="add-inner-formset">Add More</button>
 </form>
-</body>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener for plus button
-    document.getElementById('add-time-slot').addEventListener('click', function() {
-        // Clone the template of time slot fields
-        var template = document.querySelector('.time-slot');
-        var clone = template.cloneNode(true);
-        
-        // Clear input values in the clone
-        var inputs = clone.querySelectorAll('input');
-        inputs.forEach(function(input) {
-            input.value = '';
-        });
-        
-        // Append the clone to the time slots container
-        document.getElementById('time-slots').appendChild(clone);
-    });
+document.getElementById('add-inner-formset').addEventListener('click', function() {
+    var innerFormsetsContainer = document.getElementById('inner-formsets');
+    var managementForm = innerFormsetsContainer.querySelector('input[name$="TOTAL_FORMS"]');
+    var totalFormCount = parseInt(managementForm.value);
+
+    var newFormset = document.createElement('div');
+    newFormset.classList.add('inner-formset');
+    newFormset.innerHTML = '{{ inner_formset.empty_form.as_p|escapejs }}';
+
+    innerFormsetsContainer.appendChild(newFormset);
+    managementForm.value = totalFormCount + 1;
+});
 });
 </script>
+
+</body>
 </html>
+
+

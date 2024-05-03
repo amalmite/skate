@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.forms.models import inlineformset_factory
 
 
 class SessionUpdateForm(forms.ModelForm):
@@ -427,19 +428,46 @@ class RoleForm(forms.ModelForm):
 
         }
 
-class SessionScheduleForm(forms.ModelForm):
-    class Meta:
-        model = SessionSchedule
-        fields = ['start_time','end_time']
-
 
 class SessionDateForm(forms.ModelForm):
 
     class Meta:
         model = SessionDate
-        fields = ['session', 'start_date', 'end_date']
+        fields = [ 'start_date', 'end_date']
         
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+
+class SessionScheduleForm(forms.ModelForm):
+    class Meta:
+        model = SessionSchedule
+        fields = ['start_time', 'end_time']
+          
+        widgets = {
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+
+
+
+
+SessionScheduleFormset = inlineformset_factory(SessionDate, SessionSchedule, form=SessionScheduleForm, extra=1)
+
+from .models import OuterRepeater, InnerRepeater
+
+class InnerRepeaterForm(forms.ModelForm):
+    class Meta:
+        model = InnerRepeater
+        fields = ['inner_text_input']
+
+class OuterRepeaterForm(forms.ModelForm):
+    class Meta:
+        model = OuterRepeater
+        fields = ['text_input']
+
+        
+# InnerRepeaterFormset = inlineformset_factory(OuterRepeater, InnerRepeater, form=InnerRepeaterForm, extra=1)

@@ -417,7 +417,7 @@ class HomeAdvertisement(models.Model):
 
 
 class SessionDate(models.Model):
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE,null=True)
     start_date = models.DateField()
     end_date = models.DateField()
     monday = models.BooleanField(default=False)
@@ -442,4 +442,17 @@ class SessionSchedule(models.Model):
 
     def __str__(self):
         return f" Session {self.session_date} {self.start_time} - {self.end_time}"
+
+
+class OuterRepeater(models.Model):
+    text_input = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.text_input}"
+
+class InnerRepeater(models.Model):
+    outer_repeater = models.ForeignKey(OuterRepeater, on_delete=models.CASCADE)
+    inner_text_input = models.CharField(max_length=100)
+    def __str__(self):
+        return f"{self.outer_repeater.text_input}-{self.inner_text_input}"
 

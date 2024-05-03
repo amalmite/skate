@@ -9,8 +9,13 @@ router = DefaultRouter()
 
 
 urlpatterns = [
-    path("session/", create_session, name="session"),
-    path("list_page/", get_session, name="list_page"),
+    # path("session/", SessionTestView.as_view(template_name = "Session/session.html"), name="session"),
+    path("session/", create_outer_repeater, name="session"),
+
+    path("test/", SessionView.as_view(template_name = "Session/test.html"), name="test"),
+
+
+
 
 
 
@@ -206,3 +211,30 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+# def create_outer_repeater(request):
+#     if request.method == 'POST':
+#         outer_form = SessionDateForm(request.POST)
+#         inner_formset = SessionScheduleFormset(request.POST)
+
+#         if outer_form.is_valid() and inner_formset.is_valid():
+#             start_date = outer_form.cleaned_data['start_date']
+#             end_date = outer_form.cleaned_data['end_date']
+
+#             session_date_instance = outer_form.save()
+#             current_date = start_date
+#             while current_date <= end_date:
+#                 for form in inner_formset:
+#                     start_time = form.cleaned_data['start_time']
+#                     end_time = form.cleaned_data['end_time']
+#                     session =SessionSchedule.objects.create(session_date = session_date_instance,start_time=start_time,end_time=end_time)
+#                     session.save()
+#                 current_date += timedelta(days=1)
+#             return HttpResponse('Data saved successfully.')
+#     else:
+#         outer_form = SessionDateForm()
+#         inner_formset = SessionScheduleFormset()
+#     return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
+
