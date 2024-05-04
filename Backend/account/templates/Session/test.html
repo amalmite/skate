@@ -48,7 +48,7 @@
       "inner-list": [
         {
           "inner-text-input": "",
-        
+
         },
       ],
     },
@@ -69,69 +69,144 @@
     <form class="add-transactions pt-0" method="post">
       {% csrf_token %}
 
-      
+
       <div class="repeater">
         <div data-repeater-list="outer-list">
           <div data-repeater-item>
             <div class="row" id="text-input">
+              
 
-            <small class="text-light fw-medium">Days</small>
-            <div class="col-sm mb-4">
-                    {{ date_form.session }}
+              <div class="form-floating form-floating-outline mb-4">
+                {{ date_form.session }}
+              </div>
+              <div class="row">
+                <div class="col-md">
+                  <div class="form-floating form-floating-outline mb-4">
                     {{ date_form.start_date }}
-                    {{ date_form.end_date }}
-                    {{ date_form.monday }}
-                    {{ date_form.tuesday }}
-                    {{ date_form.wednesday }}
-                    {{ date_form.thursday }}
-                    {{ date_form.friday }}
-                    {{ date_form.saturday }}
-                    {{ date_form.sunday }}
+                    <label for="due-date">{% translate 'Start Date' %}</label>
                   </div>
-            </div>
+                </div>
+                <div class="col-md">
+                  <div class="form-floating form-floating-outline mb-4">
+                    {{ date_form.end_date }}
 
-            <div class="inner-repeater">
-              <div data-repeater-list="inner-list">
-                <div data-repeater-item>
+                    <label for="due-date">{% translate 'End Date' %}</label>
+                  </div>
+                </div>
+              </div>
 
-                  <div class="row" id="inner-text-input">
-                    <div class="col-md-4">
-                                {{ time_form.start_time }}
-                                {{ time_form.end_time }}
-                                {{ time_form.price }}
-                                {{ time_form.total_admissions }}
+              <div class="row">
+                <small class="text-light fw-medium">Days</small>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.monday }}
+                    <label class="form-check-label" for="defaultCheck1"> Mon </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.tuesday }}
+                    <label class="form-check-label" for="defaultCheck1"> Tue </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.wednesday }}
+                    <label class="form-check-label" for="defaultCheck1"> Wed </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.thursday }}
+                    <label class="form-check-label" for="defaultCheck1"> Thr </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.friday }}
+                    <label class="form-check-label" for="defaultCheck1"> Fri </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.saturday }}
+                    <label class="form-check-label" for="defaultCheck1"> Sat </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check mt-3">
+                    {{ date_form.sunday }}
+                    <label class="form-check-label" for="defaultCheck1"> Sun </label>
+                  </div>
+                </div>
+                <div class="col-sm mb-4">
+                  <div class="form-check ">
+                    <button type="button" data-repeater-delete class="btn btn-danger">Delete</button>
+                  </div>
+                </div>
+              </div>
+              </div>
 
 
 
+              <div class="inner-repeater">
+                <div data-repeater-list="inner-list">
+                  <div data-repeater-item>
+
+                    <div class="row" id="inner-text-input">
+                      <div class="col-md-3">
+                        <div class="form-floating form-floating-outline mb-4">
+                          {{ time_form.start_time }}
+                          <label for="flatpickr-time">Start Time</label>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-floating form-floating-outline mb-4">
+                          {{ time_form.end_time }}
+                          <label for="flatpickr-time">End Time</label>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-floating form-floating-outline mb-4">
+                          {{ time_form.price }}
+                          <label for="flatpickr-time">Total Price</label>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-floating form-floating-outline mb-4">
+                          {{ time_form.total_admissions }}
+                          <label for="flatpickr-time">Total Admissions</label>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-floating form-floating-outline mb-4">
+                          <button type="button" data-repeater-delete class="btn btn-danger">Delete</button>
+                        </div>
+                      </div>
 
 
-                {% comment %} <input type="time"name="start_time"/>
-                <input type="time"name="end_time"/> {% endcomment %}
-
-                     
                     </div>
+                    </div>
+                    
+                  </div>
+                    <button type="button" class="btn btn-primary mb-4 mt-4" data-repeater-create>
+                      Add Time
+                    </button>
                   </div>
 
                 </div>
               </div>
-              <button type="button" class="btn btn-primary mb-4 mt-4" data-repeater-create>
-                Add Time
+              <button type="button" class="btn btn-primary mb-4" data-repeater-create>
+                Add Date
               </button>
             </div>
-
-          </div>
-        </div>
-        <button type="button" class="btn btn-primary mb-4" data-repeater-create>
-          Add Date
-        </button>
-      </div>
-      <div>
-        <button type="submit" class="btn btn-primary me-sm-3 me-1" name="submitButton">
-          {% translate 'Submit' %}
-        </button>
-      </div>
+            <div>
+              <button type="submit" class="btn btn-primary me-sm-3 me-1" name="submitButton">
+                {% translate 'Submit' %}
+              </button>
+            </div>
+          
     </form>
-  </div>
-</div>
-
+    </div>
+    </div>
 {% endblock %}

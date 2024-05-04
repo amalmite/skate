@@ -435,6 +435,7 @@ class SessionSchedule(models.Model):
     session_date = models.ForeignKey(SessionDate, on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    current_date = models.DateField(null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total_admissions = models.PositiveBigIntegerField(null=True, blank=True)
 

@@ -859,25 +859,24 @@ def dashboard_crm(request):
     return HttpResponse("hello")
 
 from datetime import datetime
-from account.models import Session
+
+
 def parse_query_dict(data):
     parsed_dict = {}
-
     for key, value in data.items():
-        current_dict = parsed_dict
-        keys = key.split('[')
-        for i, k in enumerate(keys):
-            if k.endswith(']'):
-                k = k[:-1]
-            if k not in current_dict:
-                current_dict[k] = {}
-            if i < len(keys) - 1:
-                current_dict = current_dict[k]
-            else:
-                current_dict[k] = value[0] if isinstance(value, list) else value
-
-    print(parsed_dict)
-
+        if key not in ['csrfmiddlewaretoken', 'submitButton']:
+            current_dict = parsed_dict
+            keys = key.split('[')
+            for i, k in enumerate(keys):
+                if k.endswith(']'):
+                    k = k[:-1]
+                if k not in current_dict:
+                    current_dict[k] = {}
+                if i < len(keys) - 1:
+                    current_dict = current_dict[k]
+                else:
+                    current_dict[k] = value[0] if isinstance(value, list) else value
+    return parsed_dict
 
 class SessionView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -887,67 +886,109 @@ class SessionView(TemplateView):
         context['time_form']=time_form
         context['date_form'] = date_form
         return context
-
+    
     def post(self, request):
         data = request.POST
         parsed_dict = parse_query_dict(data)
-        print(parsed_dict,'lllllllllllllllllllllllllllllllll')
+        for outer_key, outer_value in parsed_dict.items():
+            for inner_key, inner_value in outer_value.items():
+                print(inner_value,'ppp')
+                start_date = inner_value['start_date']
+                end_date = inner_value['end_date']
+                end_date = inner_value.get('end_date', None)
+                monday = inner_value.get('monday', None)
+                tuesday = inner_value.get('tuesday', None)
+                wednesday = inner_value.get('wednesday', None)
+                thursday = inner_value.get('thursday', None)
+                friday = inner_value.get('friday', None) 
+                saturday = inner_value.get('saturday', None)
+                sunday = inner_value.get('sunday', None)
+                session_id = inner_value.get('session', None)
 
-        outer_list_keys = [key for key in data.keys() if key.startswith('outer-list')]
-        outer_lists = {key: data[key] for key in outer_list_keys}    
-
-        for i, (key, value) in enumerate(outer_lists.items()):
-            session_id =outer_lists.get(f"outer-list[{i}][session]")
-            start_date = outer_lists.get(f"outer-list[{i}][start_date]")
-            end_date = outer_lists.get(f"outer-list[{i}][end_date]")    
-            monday =outer_lists.get(f"outer-list[{i}][monday][]")
-            tuesday =outer_lists.get(f"outer-list[{i}][tuesday][]")    
-            wednesday =outer_lists.get(f"outer-list[{i}][wednesday][]")    
-            thursday =outer_lists.get(f"outer-list[{i}][thursday][]")    
-            friday =outer_lists.get(f"outer-list[{i}][friday][]")    
-            saturday =outer_lists.get(f"outer-list[{i}][saturday][]")    
-            sunday =outer_lists.get(f"outer-list[{i}][sunday][]") 
-            try: 
-                session_instance = Session.objects.get(id=session_id)
-            except Session.DoesNotExist:
-                print('errorrrrrrrrrrrr')
-
-
-            if start_date and end_date:
-                session_date = SessionDate.objects.create(session=session_instance,start_date=start_date, end_date=end_date,
-                                                          monday=bool(monday),tuesday=bool(tuesday),wednesday=bool(wednesday),thursday=bool(thursday),friday=bool(friday),saturday=bool(saturday),sunday=bool(sunday))
+                session_instance = get_object_or_404(Session, id=session_id)
+                session_date_instance = SessionDate.objects.create(start_date=start_date, end_date=end_date, session=session_instance,
+                                                        monday=bool(monday), tuesday=bool(tuesday), wednesday=bool(wednesday), thursday=bool(thursday), friday=bool(friday), saturday=bool(saturday), sunday=bool(sunday)
+                )       
                 allowed_days = []
                 for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
-                    if getattr(session_date, day):
+                    if getattr(session_date_instance, day):
                         allowed_days.append(day.lower())
-            
-                
-                inner_list_keys = [inner_key for inner_key in data.keys() if f"outer-list[{i}][inner-list]" in inner_key]
-                inner_lists = {inner_key: data[inner_key] for inner_key in inner_list_keys}
-                
-                current_date = datetime.strptime(session_date.start_date, '%Y-%m-%d')
-                end_date = datetime.strptime(session_date.end_date, '%Y-%m-%d')
 
+                inner_list = inner_value['inner-list']
+                current_date = datetime.strptime(session_date_instance.start_date, '%Y-%m-%d')
+                end_date = datetime.strptime(session_date_instance.end_date, '%Y-%m-%d')
 
                 while current_date <= end_date:
                     if current_date.strftime('%A').lower() in allowed_days:
-
-                        for j, (inner_key, inner_value) in enumerate(inner_lists.items()):
-                            start_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][start_time]")
-                            end_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][end_time]")
-                            price = inner_lists.get(f"outer-list[{i}][inner-list][{j}][price]")
-                            total_admissions = inner_lists.get(f"outer-list[{i}][inner-list][{j}][total_admissions]")
-
-                            
-                            if start_time and end_time:
-                                SessionSchedule.objects.create(
-                                    start_time=start_time,
-                                    end_time=end_time,
-                                    session_date=session_date,price=price,total_admissions=total_admissions
+                        for inner_list_key, inner_list_value in inner_list.items():
+                            start_time = inner_list_value['start_time']
+                            end_time = inner_list_value['end_time']
+                            price = inner_list_value['price']
+                            SessionSchedule.objects.create(
+                                        session_date=session_date_instance, start_time=start_time, end_time=end_time,current_date=current_date
                                 )
                     current_date += timedelta(days=1)
-                    
+
+            return redirect('index')
         return redirect('test')
+
+
+
+        # outer_list_keys = [key for key in data.keys() if key.startswith('outer-list')]
+        # outer_lists = {key: data[key] for key in outer_list_keys}    
+
+        # for i, (key, value) in enumerate(outer_lists.items()):
+        #     session_id =outer_lists.get(f"outer-list[{i}][session]")
+        #     start_date = outer_lists.get(f"outer-list[{i}][start_date]")
+        #     end_date = outer_lists.get(f"outer-list[{i}][end_date]")    
+        #     monday =outer_lists.get(f"outer-list[{i}][monday][]")
+        #     tuesday =outer_lists.get(f"outer-list[{i}][tuesday][]")    
+        #     wednesday =outer_lists.get(f"outer-list[{i}][wednesday][]")    
+        #     thursday =outer_lists.get(f"outer-list[{i}][thursday][]")    
+        #     friday =outer_lists.get(f"outer-list[{i}][friday][]")    
+        #     saturday =outer_lists.get(f"outer-list[{i}][saturday][]")    
+        #     sunday =outer_lists.get(f"outer-list[{i}][sunday][]") 
+        #     try: 
+        #         session_instance = Session.objects.get(id=session_id)
+        #     except Session.DoesNotExist:
+        #         print('errorrrrrrrrrrrr')
+
+
+        #     if start_date and end_date:
+        #         session_date = SessionDate.objects.create(session=session_instance,start_date=start_date, end_date=end_date,
+        #                                                   monday=bool(monday),tuesday=bool(tuesday),wednesday=bool(wednesday),thursday=bool(thursday),friday=bool(friday),saturday=bool(saturday),sunday=bool(sunday))
+        #         allowed_days = []
+        #         for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
+        #             if getattr(session_date, day):
+        #                 allowed_days.append(day.lower())
+            
+                
+        #         inner_list_keys = [inner_key for inner_key in data.keys() if f"outer-list[{i}][inner-list]" in inner_key]
+        #         inner_lists = {inner_key: data[inner_key] for inner_key in inner_list_keys}
+                
+        #         current_date = datetime.strptime(session_date.start_date, '%Y-%m-%d')
+        #         end_date = datetime.strptime(session_date.end_date, '%Y-%m-%d')
+
+
+        #         while current_date <= end_date:
+        #             if current_date.strftime('%A').lower() in allowed_days:
+
+        #                 for j, (inner_key, inner_value) in enumerate(inner_lists.items()):
+        #                     start_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][start_time]")
+        #                     end_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][end_time]")
+        #                     price = inner_lists.get(f"outer-list[{i}][inner-list][{j}][price]")
+        #                     total_admissions = inner_lists.get(f"outer-list[{i}][inner-list][{j}][total_admissions]")
+
+                            
+        #                     if start_time and end_time:
+        #                         SessionSchedule.objects.create(
+        #                             start_time=start_time,
+        #                             end_time=end_time,
+        #                             session_date=session_date,price=price,total_admissions=total_admissions
+        #                         )
+        #             current_date += timedelta(days=1)
+                    
+        # return redirect('test')
 
 
         
