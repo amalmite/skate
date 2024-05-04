@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0010_alter_employee_id_expiration_date_and_more'),
+        ("account", "0010_alter_employee_id_expiration_date_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='employee',
-            name='basic_pay',
+            model_name="employee",
+            name="basic_pay",
             field=models.DecimalField(decimal_places=2, max_digits=10, null=True),
         ),
         migrations.AlterField(
-            model_name='employee',
-            name='emirates_id',
+            model_name="employee",
+            name="emirates_id",
             field=models.CharField(max_length=20, null=True, unique=True),
         ),
     ]

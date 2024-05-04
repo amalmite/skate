@@ -199,9 +199,7 @@ class ProductUpdateForm(forms.ModelForm):
                 choices=((True, "Active"), (False, "Inactive")),
                 attrs={"class": "form-control"},
             ),
-            
         }
-
 
 
 class AdminProfileForm(forms.ModelForm):
@@ -400,7 +398,7 @@ class BusinessProfileForm(forms.ModelForm):
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
-        fields = '__all__'
+        fields = "__all__"
         widgets = {
             "name": forms.Select(
                 attrs={"class": "form-control", "placeholder": "Page Name"}
@@ -410,22 +408,18 @@ class ModuleForm(forms.ModelForm):
             ),
         }
 
+
 class RoleForm(forms.ModelForm):
     class Meta:
         model = Role
-        fields = '__all__'
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Role Name"}
             ),
-            "role_type": forms.Select(
-                attrs={"class": "form-control"}
-            ),
-            "business_profile": forms.Select(
-                attrs={"class": "form-control"}
-            ),
-            "modules": forms.SelectMultiple(attrs={"class": "form-control h-100"})
-
+            "role_type": forms.Select(attrs={"class": "form-control"}),
+            "business_profile": forms.Select(attrs={"class": "form-control"}),
+            "modules": forms.SelectMultiple(attrs={"class": "form-control h-100"}),
         }
 
 
@@ -433,41 +427,58 @@ class SessionDateForm(forms.ModelForm):
 
     class Meta:
         model = SessionDate
-        fields = [ 'start_date', 'end_date']
-        
+        fields = [
+            "session",
+            "start_date",
+            "end_date",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+        ]
+
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            
+            "start_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "end_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "session": forms.Select(attrs={"class": "form-control"}),
+
         }
 
 
 class SessionScheduleForm(forms.ModelForm):
     class Meta:
         model = SessionSchedule
-        fields = ['start_time', 'end_time']
-          
+        fields = ["start_time", "end_time", "price", "total_admissions"]
+
         widgets = {
-            'start_time': forms.TimeInput(attrs={'type': 'time'}),
-            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            "start_time": forms.TimeInput(attrs={"class": "form-control", "type": "time"}),
+            "end_time": forms.TimeInput(attrs={"class": "form-control", "type": "time"}),
+            "price": forms.TextInput(attrs={"class": "form-control"}),
+            "total_admissions": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 
+# SessionScheduleFormset = inlineformset_factory(
+#     SessionDate, SessionSchedule, form=SessionScheduleForm, extra=1
+# )
+
+# from .models import OuterRepeater, InnerRepeater
 
 
+# class InnerRepeaterForm(forms.ModelForm):
+#     class Meta:
+#         model = InnerRepeater
+#         fields = ["inner_text_input"]
 
-SessionScheduleFormset = inlineformset_factory(SessionDate, SessionSchedule, form=SessionScheduleForm, extra=1)
 
-from .models import OuterRepeater, InnerRepeater
+# class OuterRepeaterForm(forms.ModelForm):
+#     class Meta:
+#         model = OuterRepeater
+#         fields = ["text_input"]
 
-class InnerRepeaterForm(forms.ModelForm):
-    class Meta:
-        model = InnerRepeater
-        fields = ['inner_text_input']
 
-class OuterRepeaterForm(forms.ModelForm):
-    class Meta:
-        model = OuterRepeater
-        fields = ['text_input']
-
-        
-# InnerRepeaterFormset = inlineformset_factory(OuterRepeater, InnerRepeater, form=InnerRepeaterForm, extra=1)
+# # InnerRepeaterFormset = inlineformset_factory(OuterRepeater, InnerRepeater, form=InnerRepeaterForm, extra=1)

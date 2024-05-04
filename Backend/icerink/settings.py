@@ -117,28 +117,17 @@ WSGI_APPLICATION = "icerink.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
-    "default": dj_database_url.parse(
-        "postgres://skate_mhpr_user:SEV0dITin2ajvvgiLO2tLCGcUvvNd1jZ@dpg-cojoqegcmk4c73c01lvg-a.oregon-postgres.render.com/skate_mhpr"
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'your_database_name',
-#         'USER': 'your_mysql_username',
-#         'PASSWORD': 'your_mysql_password',
-#         'HOST': 'localhost',   # Or your MySQL host
-#         'PORT': '3306',        # MySQL default port
-#     }
+#     "default": dj_database_url.parse(
+#         "postgres://skate_mhpr_user:SEV0dITin2ajvvgiLO2tLCGcUvvNd1jZ@dpg-cojoqegcmk4c73c01lvg-a.oregon-postgres.render.com/skate_mhpr"
+#     )
 # }
 
 # Password validation

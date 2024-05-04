@@ -77,13 +77,18 @@
 
             <small class="text-light fw-medium">Days</small>
             <div class="col-sm mb-4">
-            <input type="date"name="start_date"/>
-            <input type="date"name="end_date"/>
-
-            
+                    {{ date_form.session }}
+                    {{ date_form.start_date }}
+                    {{ date_form.end_date }}
+                    {{ date_form.monday }}
+                    {{ date_form.tuesday }}
+                    {{ date_form.wednesday }}
+                    {{ date_form.thursday }}
+                    {{ date_form.friday }}
+                    {{ date_form.saturday }}
+                    {{ date_form.sunday }}
                   </div>
             </div>
-            <!-- <input type="text"name="main-input"/> -->
 
             <div class="inner-repeater">
               <div data-repeater-list="inner-list">
@@ -91,8 +96,17 @@
 
                   <div class="row" id="inner-text-input">
                     <div class="col-md-4">
-                <input type="time"name="start_time"/>
-                <input type="time"name="end_time"/>
+                                {{ time_form.start_time }}
+                                {{ time_form.end_time }}
+                                {{ time_form.price }}
+                                {{ time_form.total_admissions }}
+
+
+
+
+
+                {% comment %} <input type="time"name="start_time"/>
+                <input type="time"name="end_time"/> {% endcomment %}
 
                      
                     </div>

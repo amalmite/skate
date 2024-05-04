@@ -6,23 +6,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0011_alter_employee_basic_pay_alter_employee_emirates_id'),
+        ("account", "0011_alter_employee_basic_pay_alter_employee_emirates_id"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='InnerRepeater',
+            name="InnerRepeater",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('inner_text_input', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("inner_text_input", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='OuterRepeater',
+            name="OuterRepeater",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text_input', models.CharField(max_length=100)),
-                ('inner_repeater', models.ManyToManyField(related_name='outer_repeaters', to='account.innerrepeater')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text_input", models.CharField(max_length=100)),
+                (
+                    "inner_repeater",
+                    models.ManyToManyField(
+                        related_name="outer_repeaters", to="account.innerrepeater"
+                    ),
+                ),
             ],
         ),
     ]

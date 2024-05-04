@@ -11,16 +11,8 @@ router = DefaultRouter()
 urlpatterns = [
     # path("session/", SessionTestView.as_view(template_name = "Session/session.html"), name="session"),
     path("session/", create_outer_repeater, name="session"),
-
-    path("test/", SessionView.as_view(template_name = "Session/test.html"), name="test"),
-
-
-
-
-
-
+    path("test/", SessionView.as_view(template_name="Session/test.html"), name="test"),
     path("", AdminDashboard.as_view(template_name="test.html"), name="admin_home"),
-
     path(
         "admin_login/",
         AdminLoginView.as_view(template_name="Auth/admin_login.html"),
@@ -147,19 +139,38 @@ urlpatterns = [
         ProductUpdateView.as_view(template_name="Product/update_product.html"),
         name="product_update",
     ),
-    path("module_create/" ,ModuleCreateListView.as_view(template_name = "Company/create_module.html"),name="module_create"),
-    path("module_list/" ,ModuleCreateListView.as_view(template_name = "Company/list_module.html"),name="module_list"),
-    path("module_update/<int:id>/" ,ModuleUpdateView.as_view(template_name = "Company/update_module.html"),name="module_update"),
-    path("module_delete/<int:id>/" ,module_delete,name="module_delete"),
-
-
-    path("role_create/" ,RoleCreateListView.as_view(template_name = "Company/create_role.html"),name="role_create"),
-    path("role_list/" ,RoleCreateListView.as_view(template_name = "Company/list_role.html"),name="role_list"),
-    path("role_update/<int:id>/" ,RoleUpdateView.as_view(template_name = "Company/update_role.html"),name="role_update"),
-    path("role_delete/<int:id>/" ,role_delete,name="role_delete"),
-
-
-
+    path(
+        "module_create/",
+        ModuleCreateListView.as_view(template_name="Company/create_module.html"),
+        name="module_create",
+    ),
+    path(
+        "module_list/",
+        ModuleCreateListView.as_view(template_name="Company/list_module.html"),
+        name="module_list",
+    ),
+    path(
+        "module_update/<int:id>/",
+        ModuleUpdateView.as_view(template_name="Company/update_module.html"),
+        name="module_update",
+    ),
+    path("module_delete/<int:id>/", module_delete, name="module_delete"),
+    path(
+        "role_create/",
+        RoleCreateListView.as_view(template_name="Company/create_role.html"),
+        name="role_create",
+    ),
+    path(
+        "role_list/",
+        RoleCreateListView.as_view(template_name="Company/list_role.html"),
+        name="role_list",
+    ),
+    path(
+        "role_update/<int:id>/",
+        RoleUpdateView.as_view(template_name="Company/update_role.html"),
+        name="role_update",
+    ),
+    path("role_delete/<int:id>/", role_delete, name="role_delete"),
     path(
         "header-form/",
         HeaderForm.as_view(template_name="header_form.html"),
@@ -213,7 +224,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-
 # def create_outer_repeater(request):
 #     if request.method == 'POST':
 #         outer_form = SessionDateForm(request.POST)
@@ -237,4 +247,3 @@ if settings.DEBUG:
 #         outer_form = SessionDateForm()
 #         inner_formset = SessionScheduleFormset()
 #     return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
-

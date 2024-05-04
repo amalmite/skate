@@ -104,7 +104,6 @@ class Module(models.Model):
     URL_NAMES = [
         ("product Report", "/product/product-report/"),
         ("session Report", "/product/product-report/"),
-
     ]
     url = models.CharField(
         max_length=150, choices=URL_CHOICES, null=True, verbose_name="Page Name"
@@ -209,9 +208,9 @@ class Employee(models.Model):
     job_role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     passport_no = models.CharField(max_length=20, unique=True)
     passport_expiration_date = models.DateField(null=True)
-    emirates_id = models.CharField(max_length=20, unique=True,null=True)
+    emirates_id = models.CharField(max_length=20, unique=True, null=True)
     id_expiration_date = models.DateField(null=True)
-    basic_pay = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    basic_pay = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     house_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     transportation_allowance = models.DecimalField(
         max_digits=10, decimal_places=2, default=0
@@ -417,7 +416,7 @@ class HomeAdvertisement(models.Model):
 
 
 class SessionDate(models.Model):
-    session = models.ForeignKey(Session, on_delete=models.CASCADE,null=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True)
     start_date = models.DateField()
     end_date = models.DateField()
     monday = models.BooleanField(default=False)
@@ -428,17 +427,16 @@ class SessionDate(models.Model):
     saturday = models.BooleanField(default=False)
     sunday = models.BooleanField(default=False)
 
-
     def __str__(self):
-        return f" Session {self.session.name} {self.start_date} - {self.end_date}"
+        return f" {self.start_date} - {self.end_date}"
 
 
 class SessionSchedule(models.Model):
     session_date = models.ForeignKey(SessionDate, on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    price = models.DecimalField(max_digits=10, decimal_places=2,blank=True,null=True)
-    total_admissions = models.PositiveBigIntegerField(null=True,blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    total_admissions = models.PositiveBigIntegerField(null=True, blank=True)
 
     def __str__(self):
         return f" Session {self.session_date} {self.start_time} - {self.end_time}"
@@ -450,9 +448,10 @@ class OuterRepeater(models.Model):
     def __str__(self):
         return f"{self.text_input}"
 
+
 class InnerRepeater(models.Model):
     outer_repeater = models.ForeignKey(OuterRepeater, on_delete=models.CASCADE)
     inner_text_input = models.CharField(max_length=100)
+
     def __str__(self):
         return f"{self.outer_repeater.text_input}-{self.inner_text_input}"
-

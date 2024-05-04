@@ -222,14 +222,13 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class EmployeeLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
 
     def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
+        username = data.get("username")
+        password = data.get("password")
 
         user = self.get_user(username)
         if user and authenticate(email=user.email, password=password):

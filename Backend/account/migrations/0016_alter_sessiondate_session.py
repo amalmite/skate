@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0015_delete_bird'),
+        ("account", "0015_delete_bird"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sessiondate',
-            name='session',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='account.session'),
+            model_name="sessiondate",
+            name="session",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="account.session",
+            ),
         ),
     ]

@@ -767,16 +767,15 @@ from datetime import timedelta
 def create_outer_repeater(request):
     if request.method == 'POST':
         outer_form = SessionDateForm(request.POST)
-        inner_formset = SessionScheduleFormset(request.POST)
 
-        if outer_form.is_valid() and inner_formset.is_valid():
+        if outer_form.is_valid():
             start_date = outer_form.cleaned_data['start_date']
             end_date = outer_form.cleaned_data['end_date']
 
             session_date_instance = outer_form.save()
             current_date = start_date
             while current_date <= end_date:
-                for form in inner_formset:
+                for form in outer_form:
                     start_time = form.cleaned_data.get('start_time')
                     end_time = form.cleaned_data.get('end_time')
                     print(start_date,end_time)
@@ -786,8 +785,7 @@ def create_outer_repeater(request):
             return HttpResponse('Data saved successfully.')
     else:
         outer_form = SessionDateForm()
-        inner_formset = SessionScheduleFormset()
-    return render(request, 'Session/session.html', {'outer_form': outer_form, 'inner_formset': inner_formset})
+    return render(request, 'Session/session.html', {'outer_form': outer_form})
 
 
 
@@ -860,61 +858,118 @@ def index(request):
 def dashboard_crm(request):
     return HttpResponse("hello")
 
+from datetime import datetime
+from account.models import Session
+def parse_query_dict(data):
+    parsed_dict = {}
+
+    for key, value in data.items():
+        current_dict = parsed_dict
+        keys = key.split('[')
+        for i, k in enumerate(keys):
+            if k.endswith(']'):
+                k = k[:-1]
+            if k not in current_dict:
+                current_dict[k] = {}
+            if i < len(keys) - 1:
+                current_dict = current_dict[k]
+            else:
+                current_dict[k] = value[0] if isinstance(value, list) else value
+
+    print(parsed_dict)
+
+
 class SessionView(TemplateView):
     def get_context_data(self, **kwargs):
         context = TemplateLayout.init(self, super().get_context_data(**kwargs))
-        sessions = Session.objects.all()
-        context['sessions'] = sessions
+        time_form = SessionScheduleForm()
+        date_form = SessionDateForm()
+        context['time_form']=time_form
+        context['date_form'] = date_form
         return context
 
-
     def post(self, request):
-        print(request.POST)
+        data = request.POST
+        parsed_dict = parse_query_dict(data)
+        print(parsed_dict,'lllllllllllllllllllllllllllllllll')
 
-        for key, value in request.POST.items():
-            if key.startswith('outer-list'):
-                if 'main-input' in key:
-                    outer_repeater = OuterRepeater.objects.create(text_input=value)
-                    inner_list_prefix = key.replace('main-input', 'inner-list')
-                    inner_list_keys = [k for k in request.POST.keys() if k.startswith(inner_list_prefix)]
-                    for inner_key in inner_list_keys:
-                        InnerRepeater.objects.create(outer_repeater=outer_repeater, inner_text_input=request.POST[inner_key])
+        outer_list_keys = [key for key in data.keys() if key.startswith('outer-list')]
+        outer_lists = {key: data[key] for key in outer_list_keys}    
 
+        for i, (key, value) in enumerate(outer_lists.items()):
+            session_id =outer_lists.get(f"outer-list[{i}][session]")
+            start_date = outer_lists.get(f"outer-list[{i}][start_date]")
+            end_date = outer_lists.get(f"outer-list[{i}][end_date]")    
+            monday =outer_lists.get(f"outer-list[{i}][monday][]")
+            tuesday =outer_lists.get(f"outer-list[{i}][tuesday][]")    
+            wednesday =outer_lists.get(f"outer-list[{i}][wednesday][]")    
+            thursday =outer_lists.get(f"outer-list[{i}][thursday][]")    
+            friday =outer_lists.get(f"outer-list[{i}][friday][]")    
+            saturday =outer_lists.get(f"outer-list[{i}][saturday][]")    
+            sunday =outer_lists.get(f"outer-list[{i}][sunday][]") 
+            try: 
+                session_instance = Session.objects.get(id=session_id)
+            except Session.DoesNotExist:
+                print('errorrrrrrrrrrrr')
+
+
+            if start_date and end_date:
+                session_date = SessionDate.objects.create(session=session_instance,start_date=start_date, end_date=end_date,
+                                                          monday=bool(monday),tuesday=bool(tuesday),wednesday=bool(wednesday),thursday=bool(thursday),friday=bool(friday),saturday=bool(saturday),sunday=bool(sunday))
+                allowed_days = []
+                for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
+                    if getattr(session_date, day):
+                        allowed_days.append(day.lower())
+            
+                
+                inner_list_keys = [inner_key for inner_key in data.keys() if f"outer-list[{i}][inner-list]" in inner_key]
+                inner_lists = {inner_key: data[inner_key] for inner_key in inner_list_keys}
+                
+                current_date = datetime.strptime(session_date.start_date, '%Y-%m-%d')
+                end_date = datetime.strptime(session_date.end_date, '%Y-%m-%d')
+
+
+                while current_date <= end_date:
+                    if current_date.strftime('%A').lower() in allowed_days:
+
+                        for j, (inner_key, inner_value) in enumerate(inner_lists.items()):
+                            start_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][start_time]")
+                            end_time = inner_lists.get(f"outer-list[{i}][inner-list][{j}][end_time]")
+                            price = inner_lists.get(f"outer-list[{i}][inner-list][{j}][price]")
+                            total_admissions = inner_lists.get(f"outer-list[{i}][inner-list][{j}][total_admissions]")
+
+                            
+                            if start_time and end_time:
+                                SessionSchedule.objects.create(
+                                    start_time=start_time,
+                                    end_time=end_time,
+                                    session_date=session_date,price=price,total_admissions=total_admissions
+                                )
+                    current_date += timedelta(days=1)
+                    
         return redirect('test')
 
 
-# def SessionDelete(request,id):
-#     session = get_object_or_404(Session,id=id)
-#     session.delete()
-#     messages.success(request, 'Session Deleted')
-#     return redirect('list_session')
+        
 
+    # def post(self, request):
+    #     outer_form = OuterRepeaterForm(request.POST)
+        
+    #     inner_form = InnerRepeater(request.POST)
+    #     print(request.POST)
+    #     # if outer_form.is_valid() and inner_form.is_valid():
 
-# def create_session(request):
-#     if request.method == 'POST':
-#         session_form = SessionCreateForm(request.POST, request.FILES)
-#         hourly_session_form = HourlySessionForm(request.POST)
-#         membership_session_form = MembershipSessionForm(request.POST)
+    #     # for key, value in request.POST.items():
+    #     #     if key.startswith('outer-list'):
+    #     #         if 'main-input' in key:
+    #     #             outer_repeater = OuterRepeater.objects.create(text_input=value)
+    #     #             inner_list_prefix = key.replace('maininput-', 'inner-list')
+    #     #             inner_list_keys = [k for k in request.POST.keys() if k.startswith(inner_list_prefix)]
+    #     #             for inner_key in inner_list_keys:
+    #     #                 InnerRepeater.objects.create(outer_repeater=outer_repeater, inner_text_input=request.POST[inner_key])
 
-#         if session_form.is_valid():
-#             session = session_form.save()
-#             session_type = session_form.cleaned_data['session_type']
-#             if session_type == 'hour':
-#                 if hourly_session_form.is_valid():
-#                     hour_session = hourly_session_form.save(commit=False)
-#                     hour_session.session = session
-#                     hour_session.save()
-#             elif session_type == 'month':
-#                 if membership_session_form.is_valid():
-#                     membership_session = membership_session_form.save(commit=False)
-#                     membership_session.session = session
-#                     membership_session.save()
-#             return redirect('/')
-#     else:
-#         session_form = SessionCreateForm()
-#         hourly_session_form = HourlySessionForm()
-#         membership_session_form = MembershipSessionForm()
-#     return render(request, 'session.html', {'session_form': session_form, 'hourly_session_form': hourly_session_form, 'membership_session_form': membership_session_form})
+    #     return redirect('test')
+
 
 
 # Employee & Use API

@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0008_sessiondate_friday_sessiondate_saturday_and_more'),
+        ("account", "0008_sessiondate_friday_sessiondate_saturday_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sessionschedule',
-            name='price',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+            model_name="sessionschedule",
+            name="price",
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=10, null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='sessionschedule',
-            name='total_admissions',
+            model_name="sessionschedule",
+            name="total_admissions",
             field=models.PositiveBigIntegerField(blank=True, null=True),
         ),
     ]

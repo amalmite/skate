@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0007_alter_module_name_alter_module_url'),
+        ("account", "0007_alter_module_name_alter_module_url"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sessiondate',
-            name='friday',
+            model_name="sessiondate",
+            name="friday",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='sessiondate',
-            name='saturday',
+            model_name="sessiondate",
+            name="saturday",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='sessiondate',
-            name='thursday',
+            model_name="sessiondate",
+            name="thursday",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='sessiondate',
-            name='wednesday',
+            model_name="sessiondate",
+            name="wednesday",
             field=models.BooleanField(default=False),
         ),
     ]
